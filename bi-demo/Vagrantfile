@@ -35,7 +35,10 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   # Control the permissions of this file by setting owner: "root",
   # group: "root"
-  #config.vm.synced_folder "dev", "/home/vagrant/dev", create: true
+  #
+  # We must sync with the current folder to get the vagrant_provision.sh
+  # after we start
+  config.vm.synced_folder ".", "/home/vagrant/scripts"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
