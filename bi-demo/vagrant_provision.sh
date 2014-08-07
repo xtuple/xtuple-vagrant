@@ -4,9 +4,7 @@
 wget git.io/hikK5g -qO- | sudo bash
 # So we reset to 0.8
 sudo n 0.8
-sudo npm update npm
-# But that gives ownership to root, which causes later trouble with npm install
-sudo chown -R vagrant .npm
+sudo npm update -g npm
 
 # diagnostics
 set -x
