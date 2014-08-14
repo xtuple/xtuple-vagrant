@@ -1,4 +1,4 @@
-Vagrant Setup for Commercial BI Demo
+## Vagrant Setup for Commercial BI Demo ##
 
 Download and install [VirtualBox 4.3.12](https://www.virtualbox.org/wiki/Downloads)
   - Do not open VirtualBox or create a virtual machine. This will be handled by Vagrant.
@@ -18,7 +18,7 @@ Modify the config file at xtuple-vagrant/bi-demo/.ssh/config to specify your key
 
 Install VirtualBox Guest Additions Plugin
 
-    cd xtuple-vagrant/bi-demo
+    host $ cd xtuple-vagrant/bi-demo
     host $ vagrant plugin install vagrant-vbguest
 	
 Start the virtual machine:
