@@ -24,5 +24,8 @@ Install VirtualBox Guest Additions Plugin
 Start the virtual machine:
 
     host $ vagrant up
+
+In your host file add the followign mapping:
+  192.168.33.10 administrator-460-dev.localhost
 	
-Launch your local browser and navigate to application using localhost `http://localhost:8443` or the static IP Address of the virtual machine `http://192.168.33.10:8443`
+Launch your local browser and navigate to application using https://vagrant-460-dev.localhost:443

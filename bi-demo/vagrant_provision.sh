@@ -40,7 +40,7 @@ cd ..
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.8
 cd bi-open/scripts
-sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin
+sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n vagrant-460-dev.localhost
 cd ../../bi/scripts
 sudo bash install.sh
 cd ../../bi-open/scripts
@@ -69,7 +69,6 @@ cd ..
 
 # Run a test to make sure that BI is accessible and the ETL worked
 cd private-extensions
-#- cat test/lib/sample_login_data.js | sed 's#org:.*#org: \"demo_dev\",#' > test/lib/login_data.js
 cp ../xtuple/test/lib/login_data.js* test/lib/login_data.js
 sudo npm run-script test-bi
 
