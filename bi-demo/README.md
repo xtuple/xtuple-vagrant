@@ -29,3 +29,5 @@ In your host file add the followign mapping:
   192.168.33.10 administrator-460-dev.localhost
 	
 Launch your local browser and navigate to application using https://vagrant-460-dev.localhost:443
+
+BI won't work unless you manually change the nginx sites-available to define the BI gateway

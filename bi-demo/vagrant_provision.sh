@@ -45,7 +45,6 @@ cd ../../bi/scripts
 sudo bash install.sh
 cd ../../bi-open/scripts
 sudo bash build_bi.sh -l -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin
-sudo bash start_bi.sh
 cd ../..
 
 # Install bi-open.
@@ -61,21 +60,7 @@ cd ../xtuple
 sudo ./scripts/build_app.js -d demo_dev -e ../private-extensions/source/bi
 cd ..
 
-# Start the app.
-cd xtuple
-npm start > console.log &
-sleep 10
-cd ..
-
-# Run a test to make sure that BI is accessible and the ETL worked
-cd private-extensions
-cp ../xtuple/test/lib/login_data.js* test/lib/login_data.js
-sudo npm run-script test-bi
-
-#move to after-failure
-cat test/lib/login_data.js
-cat ../ErpBI/data-integration/properties/psg-linux/.kettle/kettle.properties
-cat ../ErpBI/biserver-ce/tomcat/logs/catalina.out
-cat ../xtuple/console.log
+# Start the servers.  This will run as an init.d on reboots
+sudo service vagrant_init
 
 echo "The xTuple Server install script is done!"
