@@ -6,7 +6,7 @@
 
 sourceDir = "../../dev"
 
-Vagrant.require_version ">= 1.6.0"
+Vagrant.require_version ">= 1.6.3"
 
 Vagrant.configure("2") do |config|
   config.vm.hostname = "xtuple-server"
@@ -39,10 +39,10 @@ Vagrant.configure("2") do |config|
 
   # set auto_update to false, if you do NOT want to check the correct
   # additions version when booting this machine
-  config.vbguest.auto_update = true
+  #config.vbguest.auto_update = true
 
   # do NOT download the iso file from a webserver
-  config.vbguest.no_remote = true
+  #config.vbguest.no_remote = true
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,

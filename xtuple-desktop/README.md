@@ -5,9 +5,9 @@
 New to Github? Learn more about basic Github activities [here](https://help.github.com/categories/54/articles).
 
 Note: This document is for setting up a virtual environment on a Unix host. If you are using a Windows host,
-please use [these instructions](../../wiki/Creating-a-Vagrant-Virtual-Environment-on-a-Windows-Host).
+please use [these instructions](https://github.com/xtuple/xtuple-vagrant/wiki/Creating-a-Vagrant-Virtual-Development-Environment-For-Qt-AND-Mobile-Development-on-a-Windows-Host).
 
-###  Install Vagrant ###
+### Install Vagrant ###
 
 - Download and install [VirtualBox 4.3.12](https://www.virtualbox.org/wiki/Downloads)
   - Do not open VirtualBox or create a virtual machine. This will be handled by Vagrant.
@@ -32,16 +32,12 @@ Clone your fork of the `xtuple-vagrant` repository in a separate directory adjac
     host $ git clone https://github.com/<your-github-username-here>/xtuple-vagrant.git
     host $ cd xtuple-vagrant
 
-**Important**: If you have previously forked these repositories, please ensure that you [update your fork](../../../xtuple/wiki/Basic-Git-Usage#wiki-merging) and [update your dependencies](../../../xtuple/wiki/Upgrading#wiki-update-stack-dependencies).
+**Important**: If you have previously forked these repositories, please ensure that you [update your fork](../../../../xtuple/wiki/Basic-Git-Usage#wiki-merging) and [update your dependencies](../../../../xtuple/wiki/Upgrading#wiki-update-stack-dependencies).
 
 ### Setup Vagrant ###
 
 - In the `Vagrantfile`, ensure that the `sourceDir` variable to matches the location of the cloned xTuple source code: `sourceDir = "../../dev"`
   - This path should be relative to the location of the Vagrantfile
-
-### Install VirtualBox Guest Additions Plugin
-
-    host $ vagrant plugin install vagrant-vbguest
 
 ### Connect to the Virtual Machine ###
 
@@ -127,4 +123,4 @@ Default username and password to your local application are `admin`
 
 Shutting down, restarting, and destroying your VM:
 
-[Basic commands](../../wiki/Vagrant-Tips-and-Tricks#wiki-vagrant-commands)
+[Basic commands](https://github.com/xtuple/xtuple-vagrant/wiki/Vagrant-Tips-and-Tricks)
