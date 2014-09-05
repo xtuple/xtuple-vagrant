@@ -25,22 +25,21 @@ git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..
   
-# Install xtuple with latest npm
-sudo npm update -g npm
+# Install xtuple
 cd xtuple
 npm install --quiet
 cd ..
 
 # Use the server to do an install and build xtuple (must be in the xtuple folder?)
 cd xtuple
-sudo xtuple-server install-dev --xt-demo --xt-adminpw admin
+sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames 192.168.33.10
 cd ..
 
 # Install BI and perform ETL
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.8
 cd bi-open/scripts
-sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n vagrant-460-dev.localhost
+sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n 192.168.33.10
 cd ../../bi/scripts
 sudo bash install.sh
 cd ../../bi-open/scripts
