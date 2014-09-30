@@ -1,0 +1,29 @@
+Installation of Commercial xTuple BI Demo
+-----------------------------------------
+
+Download and install [VirtualBox 4.3.12](https://www.virtualbox.org/wiki/Downloads)
+  - Do not open VirtualBox or create a virtual machine. This will be handled by Vagrant.
+  
+Download and install [Vagrant 1.6.3](http://www.vagrantup.com/download-archive/v1.6.3.html)
+  - Package managers like apt-get and gem install will install an older version of Vagrant so it is required to use the download page.
+
+Install Vagrant guest additions:
+     vagrant plugin install vagrant-vbguest
+
+
+Download demo image:
+     mkdir bi-demo
+	 cd bi-demo
+	 vagrant box add {path-to-box-file} --name bi-demo
+     vagrant init bi-demo
+	 
+Start demo:
+     vagrant up 
+	 
+Connect to https://192.168.33.10:443 with user admin, password admin.  
+Select Dashboard to set up your own dashboard or select Sales to see a saved Dashboard.  
+In Sales, select Analysis to start exploring data.
+	 
+
+	 
+	 
