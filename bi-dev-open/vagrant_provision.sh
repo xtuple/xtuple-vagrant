@@ -27,9 +27,9 @@ npm install --quiet
 cd ..
 
 # Use the server to do an install and build xtuple (must be in the xtuple folder?)
-#sudo n 0.11
+sudo n 0.11
 cd /home/vagrant
-sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames 192.168.33.10 --local-workspace /home/vagrant/dev/xtuple
+sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames 192.168.33.10 --local-workspace /home/vagrant/dev/xtuple  --verbose
 
 # Install BI and perform ETL
 cd /home/vagrant/dev
