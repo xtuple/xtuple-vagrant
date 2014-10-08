@@ -7,7 +7,7 @@ wget git.io/hikK5g -qO- | sudo bash
 # Clone repos first.  Have trouble with git ssh authorization after xtuple-server install-dev is run (why?)
 cd /home/vagrant/dev
 git clone https://github.com/xtuple/xtuple.git --recursive
-git clone https://github.com/xtuple/xtuple-extensions.git
+git clone https://github.com/jgunderson/xtuple-extensions.git
 git clone https://github.com/xtuple/bi-open.git
 
 # Install xtuple-server
@@ -17,6 +17,7 @@ npm install -g xtuple-server
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.10
 cd xtuple-extensions
+git checkout radar
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..
