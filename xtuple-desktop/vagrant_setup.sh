@@ -2,7 +2,7 @@
 
 # fix for error message from Vagrant, but it may still show up
 if `tty -s`; then
-   mesg n
+ mesg n
 fi
 
 # set xtuple source directory
@@ -10,8 +10,18 @@ XTUPLE_DIR=/home/vagrant/dev/xtuple/
 
 # handy little function from install_script
 cdir() {
-	echo "Changing directory to $1"
-	cd $1
+  echo "Changing directory to $1"
+  cd $1
+}
+
+exitEarly() {
+  local RESULT=63
+  if [ $* -gt 0 ] ; then
+    RESULT=$1
+    shift
+  fi
+  echo $*
+  exit $RESULT
 }
 
 # install git
@@ -21,13 +31,13 @@ sudo apt-get install git -y
 # this is temporary fix for the problem where Windows
 # cannot translate the symlinks in the repository
 echo "Creating symlink to lib folder"
-cd /home/vagrant/dev/xtuple/lib/
+cdir /home/vagrant/dev/xtuple/lib/
 rm module
 ln -s ../node_modules/ module
 git update-index --assume-unchanged module
 
 echo "Creating symlink to application folder"
-cd /home/vagrant/dev/xtuple/enyo-client/application/
+cdir /home/vagrant/dev/xtuple/enyo-client/application/
 rm lib
 ln -s ../../lib/ lib
 git update-index --assume-unchanged lib
@@ -43,24 +53,41 @@ echo "Restarting Postgres Database"
 sudo service postgresql restart
 
 ##begin qtdev wizardry
-cd /home/vagrant/dev
-sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev libxi-dev libxrandr-dev libxrender-dev ubuntu-desktop
+cdir /home/vagrant/dev
+sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev    \
+               libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev \
+               libxi-dev libxrandr-dev libxrender-dev gcc make
+sudo apt-get install -q -y --no-install-recommends ubuntu-desktop \
+               firefox firefox-gnome-support
 wget http://download.qt-project.org/official_releases/qt/4.8/4.8.6/qt-everywhere-opensource-src-4.8.6.tar.gz
 tar xvf qt-everywhere-opensource-src-4.8.6.tar.gz
-cd qt-everywhere-opensource-src-4.8.6/
+cdir qt-everywhere-opensource-src-4.8.6
 echo "Configuring Qt"
-./configure -qt-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg -plugin-sql-psql -plugin-sql-odbc -plugin-sql-sqlite -I /usr/local/pgsql/include -L /usr/local/pgsql/lib -lkrb5 -webkit -confirm-license -fontconfig -opensource -continue
-echo "Installing Qt 4.8.6--GO GET SOME COFFEE IT'S GOING TO BE A WHILE"
-make -j4
-sudo make -j1 install
+./configure -qt-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
+            -plugin-sql-psql -plugin-sql-odbc -plugin-sql-sqlite   \
+            -I /usr/local/pgsql/include -L /usr/local/pgsql/lib    \
+            -lkrb5 -webkit -nomake examples -nomake demos          \
+            -confirm-license -fontconfig -opensource -continue
+echo "Building Qt 4.8.6--GO GET SOME COFFEE IT'S GOING TO BE A WHILE"
+make -j4                                || exitEarly 1 "Qt didn't build"
+
+echo "Installing Qt 4.8.6--Get another cup"
+sudo make -j1 install                   || exitEarly 1 "Qt didn't install"
+
 echo "Compiling OPENRPT dependency"
-cd /home/vagrant/dev/qt-client/openrpt
-/usr/local/Trolltech/Qt-4.8.6/bin/qmake
-make -j4
+cdir /home/vagrant/dev/qt-client/openrpt
+/usr/local/Trolltech/Qt-4.8.6/bin/qmake || exitEarly 1 "openrpt didn't qmake"
+make -j4                                || exitEarly 1 "openrpt didn't build"
 echo "Compiling CSVIMP dependency"
-cd ../csvimp
-/usr/local/Trolltech/Qt-4.8.6/bin/qmake
-make -j4
+cdir ../csvimp
+/usr/local/Trolltech/Qt-4.8.6/bin/qmake || exitEarly 1 "csvmip didn't qmake"
+make -j4                                || exitEarly 1 "csvmip didn't build"
+
+cdir /home/vagrant
+for STARTUPFILE in .profile .bashrc ; do
+  echo '[[ "$PATH" =~ Qt-4.8.6 ]] || export PATH=/usr/local/Trolltech/Qt-4.8.6/bin:$PATH' >> $STARTUPFILE
+done
+
 echo "Qt development environment finished!"
 echo "To get started cd /home/vagrant/dev/qt-client qmake then make to build xTuple desktop!"
 ##end qtdev wizardry

@@ -11,7 +11,7 @@ please use [these instructions](../../wiki/Creating-a-Vagrant-Virtual-Environmen
 
 - Download and install [VirtualBox 4.3.12](https://www.virtualbox.org/wiki/Downloads)
   - Do not open VirtualBox or create a virtual machine. This will be handled by Vagrant.
-- Download and install [Vagrant 1.6.3](http://www.vagrantup.com/download-archive/v1.6.3.html)
+- Download and install [Vagrant 1.6.4](http://www.vagrantup.com/download-archive/v1.6.4.html)
   - Package managers like apt-get and gem install will install an older version of Vagrant so it is required to use the download page.
 
 [Fork](http://github.com/xtuple/xtuple/fork) the `xtuple`, [fork](http://github.com/xtuple/xtuple-extensions/fork)  `xtuple-extensions`, and [fork](http://github.com/xtuple/xtuple-vagrant/fork) `xtuple-vagrant` repositories on Github.
@@ -20,8 +20,8 @@ Clone your forks of the `xtuple` and `xtuple-extensions` repositories to a direc
 
     host $ mkdir dev
     host $ cd dev
-    host $ git clone --recursive https://github.com/<your-github-username-here>/xtuple.git
-    host $ git clone --recursive https://github.com/<your-github-username-here>/xtuple-extensions.git
+    host $ git clone --recursive https://github.com/<your-github-username>/xtuple.git
+    host $ git clone --recursive https://github.com/<your-github-username>/xtuple-extensions.git
 
 Clone your fork of the `xtuple-vagrant` repository in a separate directory adjacent to your development folder:
 
@@ -33,24 +33,28 @@ Clone your fork of the `xtuple-vagrant` repository in a separate directory adjac
 
 **Important**: If you have previously forked these repositories, please ensure that you [update your fork](../../../xtuple/wiki/Basic-Git-Usage#wiki-merging) and [update your dependencies](../../../xtuple/wiki/Upgrading#wiki-update-stack-dependencies).
 
-### Setup Vagrant ###
+### Set up Vagrant ###
 
-- In the `Vagrantfile`, ensure that the `sourceDir` variable to matches the location of the cloned xTuple source code: `sourceDir = "../../dev"`
+- In the `Vagrantfile`, ensure that the `sourceDir` variable matches the location of the cloned xTuple source code: `sourceDir = "../../dev"`
   - This path should be relative to the location of the Vagrantfile
+
+### Install VirtualBox Guest Additions Plugin
+
+    vagrant plugin install vagrant-vbguest
 
 ### Connect to the Virtual Machine ###
 
-Start the virtual machine:
+Start the virtual machine[*](#configure-your-vm):
 
     host $ vagrant up
 
-- Vagrant will automatically run a shell script to install git and the xTuple development environment
+Vagrant will automatically run a shell script to install git and the xTuple development environment.
 
 Connect to the virtual machine via ssh:
 
     host $ vagrant ssh
 
-- The xTuple source code is synced to the folder `~/dev`
+The xTuple source code is synced to the folder `~/dev`
 
 Start the datasource:
 
@@ -74,6 +78,35 @@ Default username and password to your local application are `admin`
   * Server : `192.168.33.10`
   * Port: `5432`
   * Database: `demo`
+
+### Configure Your VM ###
+
+Sometimes you need to change the default configuration of your virtual machine. For this reason we've made it easy to change some basic settings of the vagrant VMs.
+
+There is a list of variables at the top of the `Vagrantfile`. You can override these settings by creating a file called `xtlocal.rb` and placing new variable assignments in this file. For example, if you need to change the amount of memory the VM can use, override the `xtVboxMemory` setting:
+
+    host $ cat 'xtVboxMemory = "2048"' > xtlocal.rb
+
+One common case is configuring a second or third VM running on a single host. This is easy to do. You must overrride the network address of the VM and the network ports that the host forwards to the VM. To assign these ports manually, change the `xtlocal.rb` file to look like this:
+
+    xtHostAddr      = "192.168.33.11"
+    xtHostAppPort   = 8444
+    xtHostRestPort  = 3001
+    xtHostWebPort   = 8889
+
+You can also use the `xtHostOffset` variable:
+
+First get the variables to change:
+
+    host $ egrep ^xtHost Vagrantfile > xtlocal.rb
+
+Then edit the resulting file to look something like this:
+
+    xtHostOffset    = 2
+    xtHostAddr      = "192.168.33.12"
+    xtHostAppPort   = xtGuestAppPort + xtHostOffset
+    xtHostRestPort  = xtGuestRestPort + xtHostOffset
+    xtHostWebPort   = xtGuestWebPort  + xtHostOffset
 
 ### Additional Information ###
 
