@@ -1,3 +1,8 @@
 .vagrant
 demo/source/*
 !demo/source/README.md
+*.box
+dev
+.git
+.DS_Store
+xtlocal.rb

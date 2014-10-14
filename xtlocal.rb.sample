@@ -1,0 +1,8 @@
+xtHostOffset    = 1
+xtHostAddr      = "192.168.33.11"
+xtHostAppPort   = xtGuestAppPort  + xtPortOffset
+xtHostName      = "second-vm"
+xtHostRestPort  = xtGuestRestPort + xtPortOffset
+xtHostWebPort   = xtGuestWebPort  + xtPortOffset
+
+xtVboxMemory    = "2048"
