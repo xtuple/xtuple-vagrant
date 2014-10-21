@@ -42,18 +42,17 @@ do_start()
 {
   if [ -d /home/vagrant/dev/bi-open/scripts -a \
        -d /home/vagrant/dev/xtuple/node-datasource ] ; then
-    cd /home/vagrant/dev/bi-open/scripts
+    cd /home/vagrant/dev/xtuple/node-datasource
+    sudo -u vagrant bash -c "node main.js | sudo tee -a /var/log/$SERVICE &"
+    ps auwwx | awk '/node main.js/ { print \$2}' | sudo tee \$PIDFILE
   else
     return 2
   fi
+  cd /home/vagrant/dev/bi-open/scripts
   bash start_bi.sh >> /var/log/$SERVICE 2>&1
   if [ \$? -ne 0 ] ; then
     return 2
   fi
-  cd /home/vagrant/dev/xtuple/node-datasource
-  sudo -u vagrant bash -c "node main.js | sudo tee -a /var/log/$SERVICE &"
-  sleep 10
-  ps auwwx | awk '/node main.js/ { print \$2}' | sudo tee \$PIDFILE
   return 0
 }
 
