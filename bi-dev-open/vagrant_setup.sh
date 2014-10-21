@@ -5,7 +5,7 @@ SERVICE=xtupleBi
 
 # Set up the init.d script.  It's too late for it to run in this boot so we'll call it in the provisioner
 cat <<xtupleBiEOF | sudo tee /etc/init.d/$SERVICE
-#! /bin/bash
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          xTuple-BI-Open
 # Required-Start:    $remote_fs $syslog
@@ -30,9 +30,6 @@ DESC="xTuple Open BI"
 PIDFILE=/var/run/${SERVICE}.pid
 SCRIPTNAME=/etc/init.d/$SERVICE
 
-# Exit if the package is not installed
-[ -f /home/vagrant/dev/bi-open/scripts/start_bi.sh ] || exit 0
-
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
 
@@ -43,7 +40,12 @@ SCRIPTNAME=/etc/init.d/$SERVICE
 
 do_start()
 {
-  cd /home/vagrant/dev/bi-open/scripts
+  if [ -d /home/vagrant/dev/bi-open/scripts -a \
+       -d /home/vagrant/dev/xtuple/node-datasource ] ; then
+    cd /home/vagrant/dev/bi-open/scripts
+  else
+    return 2
+  fi
   bash start_bi.sh >> /var/log/$SERVICE 2>&1
   if [ \$? -ne 0 ] ; then
     return 2
