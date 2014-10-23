@@ -164,6 +164,25 @@ IPADDR=`ifconfig | awk '/192/ { split($2, addr, ":"); print addr[2] ; exit }'`
 cd /home/vagrant
 sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames $IPADDR --local-workspace /home/vagrant/dev/xtuple  --verbose
 
+#TODO: replace this with the xtuple-server-bi plan when that's ready
+for NGINXCONFIG in /etc/nginx/sites-available/* ; do
+  if ! grep -q /pentaho $NGINXCONFIG ; then
+    sudo cp $NGINXCONFIG $NGINXCONFIG.`date +%Y%m%d_%H%M`
+    awk 'BEGIN { print "upstream bi {";
+                 print "  server 127.0.0.1:8080;"
+                 print "}"
+               }
+         /nice picture of a bunny/ {
+                 print;
+                 print "  }";
+                 print "  location /pentaho {"
+                 print "    proxy_pass http://bi;"
+                 next;
+               }
+          /.*/ { print }' $NGINXCONFIG | sudo tee $NGINXCONFIG
+  fi
+done
+
 # Install BI and perform ETL
 cd /home/vagrant/dev
 sudo chmod -R 777 /usr/local/lib
