@@ -180,6 +180,7 @@ for NGINXCONFIG in /etc/nginx/sites-available/* ; do
                  next;
                }
           /.*/ { print }' $NGINXCONFIG | sudo tee $NGINXCONFIG
+    sudo service nginx restart
   fi
 done
 
@@ -191,6 +192,7 @@ sudo -H bash build_bi.sh -eblm -c ../../xtuple/node-datasource/config.js -d demo
 cd ../..
 
 # Install bi-open.
+sudo n 0.10
 cd xtuple
 sudo ./scripts/build_app.js -d demo_dev -e ../xtuple-extensions/source/bi_open
 cd ..
