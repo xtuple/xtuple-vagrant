@@ -204,4 +204,6 @@ sudo service nginx restart
 
 sudo service $SERVICE start
 
+sudo service $SERVICE start
+
 echo "The xTuple Server install script is done!"
