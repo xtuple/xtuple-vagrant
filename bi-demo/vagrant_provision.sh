@@ -3,6 +3,16 @@ set -x
 
 SERVICE=xtupleBi
 
+#
+#  Set the repo tag below.
+#
+LASTTAG='v4.7.0-beta.2'
+XTUPLE_TAG=$LASTTAG
+XTUPLE_EXTENSIONS_TAG=$LASTTAG
+BI_OPEN_TAG=$LASTTAG
+BI_TAG=$LASTTAG
+PRIVATE_EXTENSIONS_TAG=$LASTTAG
+
 # Set up the init.d script.  It's too late for it to run in this boot so we'll call it in the provisioner
 cat <<xtupleBiEOF | sudo tee /etc/init.d/$SERVICE
 #!/bin/bash
@@ -128,7 +138,7 @@ sudo chmod +x /etc/init.d/$SERVICE
 wget xtuple.com/bootstrap -qO- | sudo bash
 
 # Clone repos first.  Have trouble with git ssh authorization after xtuple-server install-dev is run (why?)
-git clone git@github.com:xtuple/xtuple-server.git
+git clone https://github.com/xtuple/xtuple-server.git
 git clone https://github.com/xtuple/xtuple.git --recursive
 git clone https://github.com/xtuple/xtuple-extensions.git
 git clone https://github.com/xtuple/bi-open.git 
@@ -144,29 +154,36 @@ cd ..
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.10
 cd xtuple-extensions
+git checkout $XTUPLE_EXTENSIONS_TAG
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..
   
 # Install xtuple
 cd xtuple
+git checkout $XTUPLE_TAG
 npm install --quiet
 cd ..
 
 # Use the server to do an install and build xtuple (must be in the xtuple folder?)
 cd xtuple
-sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames 192.168.33.10
+sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --pg-worldlogin true --nginx-sslcnames 192.168.33.10
 cd ..
+
+# Figure out port # for cluster to use.  Look at all lines with ".", and skip main cluster.
+CLUSTERPORT=$(pg_lsclusters -h | awk '/^./ { if ($2 != "main") { print $3; } }')
 
 # Install BI and perform ETL
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.10
 cd bi-open/scripts
-sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n 192.168.33.10
+git checkout $BI_OPEN_TAG
+sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n 192.168.33.10 -p $CLUSTERPORT
 cd ../../bi/scripts
+git checkout $BI_TAG
 sudo bash install.sh
 cd ../../bi-open/scripts
-sudo bash build_bi.sh -l -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin
+sudo bash build_bi.sh -l -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -p $CLUSTERPORT -o $CLUSTERPORT
 cd ../..
 
 # Install bi-open.
@@ -176,11 +193,13 @@ cd ..
   
 # Install the bi commercial extension. 
 cd private-extensions
+git checkout $PRIVATE_EXTENSIONS_TAG
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ../xtuple
 sudo ./scripts/build_app.js -d demo_dev -e ../private-extensions/source/bi
 cd ..
+
 
 for NGINXCONFIG in /etc/nginx/sites-available/* ; do
   if ! grep -q /pentaho $NGINXCONFIG ; then
@@ -201,8 +220,6 @@ for NGINXCONFIG in /etc/nginx/sites-available/* ; do
 done
 
 sudo service nginx restart
-
-sudo service $SERVICE start
 
 sudo service $SERVICE start
 
