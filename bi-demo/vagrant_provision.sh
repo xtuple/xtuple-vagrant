@@ -178,7 +178,7 @@ sudo chmod -R 777 /usr/local/lib
 sudo n 0.10
 cd bi-open/scripts
 git checkout $BI_OPEN_TAG
-sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n 192.168.33.10 -p $CLUSTERPORT
+sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n 192.168.33.10 -p $CLUSTERPORT -o $CLUSTERPORT
 cd ../../bi/scripts
 git checkout $BI_TAG
 sudo bash install.sh
