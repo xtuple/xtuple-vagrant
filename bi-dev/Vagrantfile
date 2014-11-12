@@ -9,7 +9,7 @@
 xtHostOffset    = 0
 
 xtBox           = "hashicorp/precise64"
-xtBoxUrl        = 'http://files.vagrantup.com/precise64_vmware.box'
+xtBoxUrl        = nil
 xtForwardX11    = true
 xtGuestAppPort  = 8443
 xtGuestRestPort = 3000
@@ -20,7 +20,7 @@ xtHostAppPort   = xtGuestAppPort  + xtHostOffset
 xtHostName      = "xtuple-server"
 xtHostRestPort  = xtGuestRestPort + xtHostOffset
 xtHostWebPort   = xtGuestWebPort  + xtHostOffset
-xtSourceDir     = "../../../dev"
+xtSourceDir     = "../../dev"
 xtSourceMountPt = "/home/vagrant/dev"
 xtVagrantVer    = ">= 1.6.4"
 xtVboxGuestAU   = true
@@ -82,7 +82,11 @@ Vagrant.configure("2") do |config|
   # config.vm.network :public_network
 
   # Share a folder with the guest VM: path-on-host path-on-guest [options]
+  config.vm.synced_folder ".", "/home/vagrant/scripts"
+  config.vm.synced_folder "./.ssh", "/home/vagrant/scripts/.ssh"
   config.vm.synced_folder xtSourceDir, xtSourceMountPt
+  # Before packaging as a .box, change to:
+  # config.vm.synced_folder "./.ssh", "/home/vagrant/scripts/.ssh"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -115,7 +119,7 @@ Vagrant.configure("2") do |config|
 
   # Run install script after virtual machine is created
   # "privileged: false" required to allow xtuple-server to run
-  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: false
+  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: "false", binary: "false"
 
   config.ssh.forward_agent = true
   config.ssh.forward_x11 = xtForwardX11
