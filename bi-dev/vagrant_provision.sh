@@ -6,12 +6,11 @@ SERVICE=xtupleBi
 #
 #  Set the repo tag below.
 #
-LASTTAG='4_8_x'
-XTUPLE_TAG='map'
-XTUPLE_EXTENSIONS_TAG='185-http'
-BI_OPEN_TAG='martport'
-BI_TAG='66-billcity'
-PRIVATE_EXTENSIONS_TAG='477-http'
+XTUPLE_TAG='4_8_x'
+XTUPLE_EXTENSIONS_TAG='4_8_x'
+BI_OPEN_TAG='4_8_x'
+BI_TAG='4_8_x'
+PRIVATE_EXTENSIONS_TAG='4_8_x'
 
 # Set up the init.d script.  It's too late for it to run in this boot so we'll call it in the provisioner
 cat <<xtupleBiEOF | sudo tee /etc/init.d/$SERVICE

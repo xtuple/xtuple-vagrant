@@ -25,8 +25,8 @@ xtSourceMountPt = "/home/vagrant/dev"
 xtVagrantVer    = ">= 1.6.4"
 xtVboxGuestAU   = true
 xtVboxGuestNR   = true
-xtVboxMemory    = "4096"
-xtVmwareMemory  = "4096"
+xtVboxMemory    = "6120"
+xtVmwareMemory  = "6120"
 
 if File.file? "xtlocal.rb"
   IO.foreach("xtlocal.rb") { |line| eval line }

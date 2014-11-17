@@ -148,7 +148,6 @@ npm install -g xtuple-server
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.10
 cd xtuple-extensions
-git checkout radar
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..

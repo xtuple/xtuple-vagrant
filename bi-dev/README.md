@@ -12,13 +12,13 @@ Clone your fork of the `xtuple-vagrant` repository:
     host $ git clone https://github.com/<your-github-username-here>/xtuple-vagrant.git
 	
 Copy your git hub keys to
-    xtuple-vagrant/bi-demo/.ssh
+    xtuple-vagrant/bi-dev/.ssh
 	
-Modify the config file at xtuple-vagrant/bi-demo/.ssh/config to specify your key name.
+Modify the config file at xtuple-vagrant/bi-dev/.ssh/config to specify your key name.
 
 Install VirtualBox Guest Additions Plugin
 
-    host $ cd xtuple-vagrant/bi-demo
+    host $ cd xtuple-vagrant/bi-dev
     host $ vagrant plugin install vagrant-vbguest
 	
 Start the virtual machine:
