@@ -17,7 +17,7 @@ New to Github? Learn more about basic Github activities [here](https://help.gith
 
 ### Get the Source Files
 
-For the following repositories on GitHub:
+Fork the following repositories on GitHub:
 
 - [xtuple](http://github.com/xtuple/xtuple/fork)
 - [xtuple-extensions](http://github.com/xtuple/xtuple-extensions/fork)
@@ -44,7 +44,7 @@ Clone your fork of the `xtuple-vagrant` repository in a separate directory adjac
 
 Read [Configure Your VM](#configure-your-vm). In particular make sure the `xtSourceDir` variable matches the location of the cloned xTuple source code on the host machine.
 
-Now make sure that the VM will play nicely with your host machine:
+Now make sure the VM will play nicely with your host machine:
 
     host $ vagrant plugin install vagrant-vbguest
 
