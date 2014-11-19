@@ -19,6 +19,7 @@ xtHostAppPort   = xtGuestAppPort  + xtHostOffset
 xtHostName      = "xtuple-server"
 xtHostRestPort  = xtGuestRestPort + xtHostOffset
 xtHostWebPort   = xtGuestWebPort  + xtHostOffset
+xtPostgresVer   = "9.3"
 xtSourceDir     = "../../dev"
 xtSourceMountPt = "/home/vagrant/dev"
 xtVagrantVer    = ">= 1.6.4"
@@ -111,7 +112,7 @@ Vagrant.configure("2") do |config|
 
   # Run install script virtual machine is created
   # This forces the script to *not* be run as sudo
-  config.vm.provision "shell", path: "vagrant_setup.sh"
+  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: false, args: [ "-p", xtPostgresVer ]
 
   config.ssh.forward_x11 = xtForwardX11
 
