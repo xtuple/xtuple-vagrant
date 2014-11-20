@@ -7,7 +7,7 @@
 #   then edit xtHostOffset, xtHostAddr, xtHostName
 xtHostOffset    = 0
 
-xtBox           = "hashicorp/precise64"
+xtBox           = "ubuntu/trusty64"
 xtBoxUrl        = nil
 xtForwardX11    = true
 xtGuestAppPort  = 8443
