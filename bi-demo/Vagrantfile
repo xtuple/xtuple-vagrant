@@ -25,10 +25,21 @@ xtVboxGuestAU   = true
 xtVboxGuestNR   = true
 xtVboxMemory    = "4096"
 xtVmwareMemory  = "4096"
+xtRepo          = "xtuple"
+xtXtupleBranch  = "4_8_x"
+xtXtupleExtensionsBranch = "4_8_x"
+xtBiOpenBranch  = "4_8_x"
+xtBiBranch      = "4_8_x"
+xtPrivateExtensionsBranch = "4_8_x"
+xtXtQtdevToolsBranch = "master"
 
 if File.file? "xtlocal.rb"
   IO.foreach("xtlocal.rb") { |line| eval line }
 end
+
+#  These will be sent to the setup script as an argument
+
+xtArgs = xtRepo + " " + xtXtupleBranch + " " + xtXtupleExtensionsBranch  + " " + xtBiOpenBranch + " " + xtBiBranch + " " + xtPrivateExtensionsBranch + " " + xtXtQtdevToolsBranch
 
 Vagrant.require_version xtVagrantVer
 
@@ -116,7 +127,7 @@ Vagrant.configure("2") do |config|
 
   # Run install script after virtual machine is created
   # "privileged: false" required to allow xtuple-server to run
-  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: "false", binary: "false"
+  config.vm.provision "shell", path: "vagrant_setup.sh", args: xtArgs, privileged: "false", binary: "false"
 
   config.ssh.forward_agent = true
   config.ssh.forward_x11 = xtForwardX11
