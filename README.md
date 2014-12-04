@@ -1,20 +1,27 @@
-## Creating a Vagrant Virtual Development Environment ##
+## Creating a Vagrant Virtual Development Environment
 
 [Vagrant](http://docs.vagrantup.com/v2/why-vagrant/index.html) is open-source software used to create lightweight and portable virtual development environments. Vagrant works like a "wrapper" for VirtualBox that can create, configure, and destroy virtual machines with the use of its own terminal commands. Vagrant facilitates the setup of environments without any direct interaction with VirtualBox and allows developers to use preferred editors and browsers in their native operating system. [This blog](http://mitchellh.com/the-tao-of-vagrant) describes a typical workflow using Vagrant in a development environment.
 
 New to Github? Learn more about basic Github activities [here](https://help.github.com/categories/54/articles).
 
-Note: This document is for setting up a virtual environment on a Unix host. If you are using a Windows host,
-please use [these instructions](../../wiki/Creating-a-Vagrant-Virtual-Environment-on-a-Windows-Host).
+**Note:** If you are using a Windows host, please use [these instructions](../../wiki/Creating-a-Vagrant-Virtual-Environment-on-a-Windows-Host).
 
-###  Install Vagrant ###
+**Note:** If you want to build a desktop development environment, use the `xtuple-desktop` Vagrant setup. You can use a desktop client with a VM built using the directions below if you either install the Linux client in the VM or connect to the VM's database server with a desktop client running on the host machine.
+
+###  Install Vagrant
 
 - Download and install [VirtualBox 4.3.12](https://www.virtualbox.org/wiki/Download_Old_Builds_4_3)
   - Do not open VirtualBox or create a virtual machine. This will be handled by Vagrant.
 - Download and install [Vagrant 1.6.4](http://www.vagrantup.com/download-archive/v1.6.4.html)
   - Package managers like apt-get and gem install will install an older version of Vagrant so it is required to use the download page.
 
-[Fork](http://github.com/xtuple/xtuple/fork) the `xtuple`, [fork](http://github.com/xtuple/xtuple-extensions/fork)  `xtuple-extensions`, and [fork](http://github.com/xtuple/xtuple-vagrant/fork) `xtuple-vagrant` repositories on Github.
+### Get the Source Files
+
+Fork the following repositories on GitHub:
+
+- [xtuple](http://github.com/xtuple/xtuple/fork)
+- [xtuple-extensions](http://github.com/xtuple/xtuple-extensions/fork)
+- [xtuple-vagrant](http://github.com/xtuple/xtuple-vagrant/fork)
 
 Clone your forks of the `xtuple` and `xtuple-extensions` repositories to a directory on your host machine:
 
@@ -33,28 +40,27 @@ Clone your fork of the `xtuple-vagrant` repository in a separate directory adjac
 
 **Important**: If you have previously forked these repositories, please ensure that you [update your fork](../../../xtuple/wiki/Basic-Git-Usage#wiki-merging) and [update your dependencies](../../../xtuple/wiki/Upgrading#wiki-update-stack-dependencies).
 
-### Set up Vagrant ###
+### Set up Vagrant
 
-- In the `Vagrantfile`, ensure that the `sourceDir` variable matches the location of the cloned xTuple source code: `sourceDir = "../../dev"`
-  - This path should be relative to the location of the Vagrantfile
+Read [Configure Your VM](#configure-your-vm). In particular make sure the `xtSourceDir` variable matches the location of the cloned xTuple source code on the host machine.
 
-### Install VirtualBox Guest Additions Plugin
+Now make sure the VM will play nicely with your host machine:
 
-    vagrant plugin install vagrant-vbguest
+    host $ vagrant plugin install vagrant-vbguest
 
-### Connect to the Virtual Machine ###
+### Connect to the Virtual Machine
 
-Start the virtual machine[*](#configure-your-vm):
+Start the virtual machine.  Vagrant will automatically run a shell script to install various tools and the xTuple development environment.
 
     host $ vagrant up
-
-Vagrant will automatically run a shell script to install git and the xTuple development environment.
 
 Connect to the virtual machine via ssh:
 
     host $ vagrant ssh
 
-The xTuple source code is synced to the folder `~/dev`
+Note that the xTuple source code is synced to the folder `~/dev`:
+
+    vagrant $ ls dev    # you should see xtuple and xtuple-extensions
 
 Start the datasource:
 
@@ -65,12 +71,13 @@ Start the datasource:
 
 Launch your local browser and navigate to application using localhost `http://localhost:8888` or the static IP Address of the virtual machine `http://192.168.33.10:8888`
 
-Default username and password to your local application are `admin`
+The default username and password to your local application are `admin`
 
-### xTuple Desktop Client ###
+### xTuple Desktop Client
 
-- Obtain the [xTuple Desktop Client Installer](https://sourceforge.net/projects/postbooks/files/latest/download?source=dlp) for your platform. To be sure the PostBooks Desktop Client version matches the PostBooks database version you are installing, look at the "About" information in the Mobile client.
+If you want to build a desktop client in a Vagrant VM, you should use the `xtuple-desktop` Vagrant setup instead of this one. To _run_ a desktop client with this VM:
 
+- Get the [xTuple Desktop Client Installer](https://sourceforge.net/projects/postbooks/files/latest/download?source=dlp) for your platform. To be sure the desktop client version matches the database version for this VM, look at the "About" information in the Mobile client.
 - Run the installer. On the screen where you select an xTuple database, select "I do not need a Free Trial database."
 -  Complete the installation and launch the Desktop Client. On the login screen, enter these credentials to connect to your local xTuple server:
   * Username: `admin`
@@ -79,7 +86,7 @@ Default username and password to your local application are `admin`
   * Port: `5432`
   * Database: `demo`
 
-### Configure Your VM ###
+### Configure Your VM
 
 Sometimes you need to change the default configuration of your virtual machine. For this reason we've made it easy to change some basic settings of the vagrant VMs.
 
@@ -94,9 +101,7 @@ One common case is configuring a second or third VM running on a single host. Th
     xtHostRestPort  = 3001
     xtHostWebPort   = 8889
 
-You can also use the `xtHostOffset` variable:
-
-First get the variables to change:
+You can also use the `xtHostOffset` variable. First get the variables to change:
 
     host $ egrep ^xtHost Vagrantfile > xtlocal.rb
 
@@ -104,11 +109,11 @@ Then edit the resulting file to look something like this:
 
     xtHostOffset    = 2
     xtHostAddr      = "192.168.33.12"
-    xtHostAppPort   = xtGuestAppPort + xtHostOffset
+    xtHostAppPort   = xtGuestAppPort  + xtHostOffset
     xtHostRestPort  = xtGuestRestPort + xtHostOffset
     xtHostWebPort   = xtGuestWebPort  + xtHostOffset
 
-### Additional Information ###
+### Additional Information
 
 Shutting down, restarting, and destroying your VM:
 

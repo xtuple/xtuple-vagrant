@@ -1,5 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+# This is the VagrantFile for generating the xTuple BI Open Demo box.
 # To customize: create xtlocal.rb in the current directory
 #               containing assignments to override these defaults
 # xtHostOffset is a convenience variable.
@@ -7,7 +8,7 @@
 #   then edit xtHostOffset, xtHostAddr, xtHostName
 xtHostOffset    = 0
 
-xtBox           = "ubuntu/trusty64"
+xtBox           = "hashicorp/precise64"
 xtBoxUrl        = nil
 xtForwardX11    = true
 xtGuestAppPort  = 8443
@@ -19,9 +20,6 @@ xtHostAppPort   = xtGuestAppPort  + xtHostOffset
 xtHostName      = "xtuple-server"
 xtHostRestPort  = xtGuestRestPort + xtHostOffset
 xtHostWebPort   = xtGuestWebPort  + xtHostOffset
-xtPostgresVer   = "9.3"
-xtSourceDir     = "../../dev"
-xtSourceMountPt = "/home/vagrant/dev"
 xtVagrantVer    = ">= 1.6.4"
 xtVboxGuestAU   = true
 xtVboxGuestNR   = true
@@ -82,13 +80,19 @@ Vagrant.configure("2") do |config|
   # config.vm.network :public_network
 
   # Share a folder with the guest VM: path-on-host path-on-guest [options]
-  config.vm.synced_folder xtSourceDir, xtSourceMountPt
+  config.vm.synced_folder ".", "/home/vagrant/scripts"
+  config.vm.synced_folder "./.ssh", "/home/vagrant/scripts/.ssh"
+  # Before packaging as a .box, change to:
+  # config.vm.synced_folder "./.ssh", "/home/vagrant/scripts/.ssh"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   config.vm.provider "virtualbox" do |v|
+    # TODO: confirm these are needed for BI
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+
     # Use VBoxManage to customize the VM
-    # This line disable hw virtualization and increases memory
     v.customize ["modifyvm", :id, "--memory", xtVboxMemory]
 
     # Via http://blog.liip.ch/archive/2012/07/25/vagrant-and-node-js-quick-tip.html
@@ -110,10 +114,11 @@ Vagrant.configure("2") do |config|
   # This ensures that the locale is correctly set for Postgres
   config.vm.provision "shell", inline: 'update-locale LC_ALL="en_US.utf8"'
 
-  # Run install script virtual machine is created
-  # This forces the script to *not* be run as sudo
-  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: false, args: [ "-p", xtPostgresVer ]
+  # Run install script after virtual machine is created
+  # "privileged: false" required to allow xtuple-server to run
+  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: "false", binary: "false"
 
+  config.ssh.forward_agent = true
   config.ssh.forward_x11 = xtForwardX11
 
 end
