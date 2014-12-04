@@ -167,6 +167,9 @@ psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_f
 psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_ordertocash.sql
 psql -U admin -p $CLUSTERPORT -d demo_dev -c  "select dbtools.popordertocash('2012-12-01', 1);" >/dev/null 2>&1
 
+# xtuple-server sets node 11, but nothing works with node 11
+sudo n 0.10
+
 # Install bi-open.  The -p option runs populate_data.js to add more demo data
 cd xtuple
 sudo ./scripts/build_app.js -d demo_dev -p -e ../xtuple-extensions/source/bi_open
@@ -174,7 +177,6 @@ cd ..
 
 # Install BI and perform ETL
 sudo chmod -R 777 /usr/local/lib
-sudo n 0.10
 cd bi-open/scripts
 sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n 192.168.33.10 -p $CLUSTERPORT -o $CLUSTERPORT
 cd ../../bi/scripts
