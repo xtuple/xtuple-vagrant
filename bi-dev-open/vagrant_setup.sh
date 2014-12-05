@@ -3,6 +3,12 @@ set -x
 
 SERVICE=xtupleBi
 
+XREPO=$1
+XTUPLE_TAG=$2
+XTUPLE_EXTENSIONS_TAG=$3
+BI_OPEN_TAG=$4
+XT_QTDEV_TOOLS_TAG=$5
+
 # Set up the init.d script.  It's too late for it to run in this boot so we'll call it in the provisioner
 cat <<xtupleBiEOF | sudo tee /etc/init.d/$SERVICE
 #!/bin/bash
@@ -126,20 +132,14 @@ sudo update-rc.d $SERVICE defaults 98
 sudo chmod +x /etc/init.d/$SERVICE
 
 # Bootstrap
-wget git.io/hikK5g -qO- | sudo bash
+wget xtuple.com/bootstrap -qO- | sudo bash
 
-# TODO: Have trouble with git ssh authorization after xtuple-server install-dev is run (why?)
+# Clone the repos
 cd /home/vagrant/dev
-echo FIXME: use XTUPLE for all repos! ==========================================
-for REPO in xtuple/xtuple jgunderson/xtuple-extensions xtuple/bi-open ; do
-  REPODIR=`basename $REPO`
-  if [ ! -d "$REPODIR" ] ; then
-    git clone https://github.com/${REPO}.git
-    cd $REPODIR
-    git submodule update --init --recursive
-    cd ..
-  fi
-done
+git clone -b $XT_QTDEV_TOOLS_TAG git@github.com:$XREPO/xt-qtdev-tools.git
+git clone -b $XTUPLE_TAG https://github.com/$XREPO/xtuple.git --recursive
+git clone -b $XTUPLE_EXTENSIONS_TAG https://github.com/$XREPO/xtuple-extensions.git --recursive
+git clone -b $BI_OPEN_TAG https://github.com/$XREPO/bi-open.git 
 
 # Install xtuple-server
 npm install -g xtuple-server
@@ -148,7 +148,6 @@ npm install -g xtuple-server
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.10
 cd xtuple-extensions
-git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..
 
@@ -158,10 +157,32 @@ npm install --quiet
 cd ..
 
 # Use the server to do an install and build xtuple (must be in the xtuple folder?)
-sudo n 0.11
 IPADDR=`ifconfig | awk '/192/ { split($2, addr, ":"); print addr[2] ; exit }'`
 cd /home/vagrant
-sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames $IPADDR --local-workspace /home/vagrant/dev/xtuple  --verbose
+sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames $IPADDR --local-workspace /home/vagrant/dev/xtuple --pg-worldlogin true --verbose
+
+# Figure out port # for cluster to use.  Look at all lines with ".", and skip main cluster.
+CLUSTERPORT=$(pg_lsclusters -h | awk '/^./ { if ($2 != "main") { print $3; } }')
+
+# Add demo data, 24 months starting 2012-12
+cd /home/vagrant/dev 
+psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_functions.sql
+psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_ordertocash.sql
+psql -U admin -p $CLUSTERPORT -d demo_dev -c  "select dbtools.popordertocash('2012-12-01', 1);" >/dev/null 2>&1
+
+# xtuple-server sets node 11, but nothing works with node 11
+sudo n 0.10
+
+# Install bi-open.  The -p option runs populate_data.js to add more demo data
+cd xtuple
+sudo ./scripts/build_app.js -d demo_dev -p -e ../xtuple-extensions/source/bi_open
+cd ..
+
+# Install BI and perform ETL
+sudo chmod -R 777 /usr/local/lib
+cd bi-open/scripts
+sudo -H bash build_bi.sh -eblm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n $IPADDR -z -p $CLUSTERPORT -o $CLUSTERPORT
+cd ../..
 
 #TODO: replace this with the xtuple-server-bi plan when that's ready
 for NGINXCONFIG in /etc/nginx/sites-available/* ; do
@@ -182,19 +203,6 @@ for NGINXCONFIG in /etc/nginx/sites-available/* ; do
     sudo service nginx restart
   fi
 done
-
-# Install BI and perform ETL
-cd /home/vagrant/dev
-sudo chmod -R 777 /usr/local/lib
-cd bi-open/scripts
-sudo -H bash build_bi.sh -eblm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n $IPADDR
-cd ../..
-
-# Install bi-open.
-sudo n 0.10
-cd xtuple
-sudo ./scripts/build_app.js -d demo_dev -e ../xtuple-extensions/source/bi_open
-cd ..
 
 sudo service $SERVICE start
 
