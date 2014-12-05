@@ -17,6 +17,8 @@ Install VirtualBox Guest Additions Plugin:
     host$ cd bi-dev-open
     host$ vagrant plugin install vagrant-vbguest
 
+You can update the vagrant configuration by supplying parameters in an xtlocal.rb file. Refer to Vagrantfile for a list of parameters
+
 Start the virtual machine:
 
     host$ vagrant up
