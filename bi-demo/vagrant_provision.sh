@@ -3,16 +3,6 @@ set -x
 
 SERVICE=xtupleBi
 
-#
-#  Set the repo tag below.
-#
-LASTTAG='v4.7.0-beta.2'
-XTUPLE_TAG=$LASTTAG
-XTUPLE_EXTENSIONS_TAG=$LASTTAG
-BI_OPEN_TAG=$LASTTAG
-BI_TAG=$LASTTAG
-PRIVATE_EXTENSIONS_TAG=$LASTTAG
-
 # Set up the init.d script.  It's too late for it to run in this boot so we'll call it in the provisioner
 cat <<xtupleBiEOF | sudo tee /etc/init.d/$SERVICE
 #!/bin/bash
@@ -139,11 +129,12 @@ wget xtuple.com/bootstrap -qO- | sudo bash
 
 # Clone repos first.  Have trouble with git ssh authorization after xtuple-server install-dev is run (why?)
 git clone https://github.com/xtuple/xtuple-server.git
-git clone https://github.com/xtuple/xtuple.git --recursive
-git clone https://github.com/xtuple/xtuple-extensions.git
-git clone https://github.com/xtuple/bi-open.git 
-git clone git@github.com:xtuple/bi.git
-git clone git@github.com:xtuple/private-extensions.git
+git clone -b $XT_QTDEV_TOOLS_TAG git@github.com:$XREPO/xt-qtdev-tools.git
+git clone -b $XTUPLE_TAG https://github.com/$XREPO/xtuple.git --recursive
+git clone -b $XTUPLE_EXTENSIONS_TAG https://github.com/$XREPO/xtuple-extensions.git
+git clone -b $BI_OPEN_TAG https://github.com/$XREPO/bi-open.git 
+git clone -b $BI_TAG git@github.com:$XREPO/bi.git
+git clone -b $PRIVATE_EXTENSIONS_TAG git@github.com:$XREPO/private-extensions.git
 
 # Install xtuple-server-commercial
 cd xtuple-server
@@ -154,14 +145,12 @@ cd ..
 sudo chmod -R 777 /usr/local/lib
 sudo n 0.10
 cd xtuple-extensions
-git checkout $XTUPLE_EXTENSIONS_TAG
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..
   
 # Install xtuple
 cd xtuple
-git checkout $XTUPLE_TAG
 npm install --quiet
 cd ..
 
@@ -173,33 +162,36 @@ cd ..
 # Figure out port # for cluster to use.  Look at all lines with ".", and skip main cluster.
 CLUSTERPORT=$(pg_lsclusters -h | awk '/^./ { if ($2 != "main") { print $3; } }')
 
+# Add demo data, 24 months starting 2012-12
+psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_functions.sql
+psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_ordertocash.sql
+psql -U admin -p $CLUSTERPORT -d demo_dev -c  "select dbtools.popordertocash('2012-12-01', 1);" >/dev/null 2>&1
+
+# xtuple-server sets node 11, but nothing works with node 11
+sudo n 0.10
+
+# Install bi-open.  The -p option runs populate_data.js to add more demo data
+cd xtuple
+sudo ./scripts/build_app.js -d demo_dev -p -e ../xtuple-extensions/source/bi_open
+cd ..
+
 # Install BI and perform ETL
 sudo chmod -R 777 /usr/local/lib
-sudo n 0.10
 cd bi-open/scripts
-git checkout $BI_OPEN_TAG
 sudo -H bash build_bi.sh -ebm -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -n 192.168.33.10 -p $CLUSTERPORT -o $CLUSTERPORT
 cd ../../bi/scripts
-git checkout $BI_TAG
 sudo bash install.sh
 cd ../../bi-open/scripts
-sudo bash build_bi.sh -l -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -p $CLUSTERPORT -o $CLUSTERPORT
+sudo bash build_bi.sh -l -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -p $CLUSTERPORT -o $CLUSTERPORT -g uscities.txt
 cd ../..
 
-# Install bi-open.
-cd xtuple
-sudo ./scripts/build_app.js -d demo_dev -e ../xtuple-extensions/source/bi_open
-cd ..
-  
 # Install the bi commercial extension. 
 cd private-extensions
-git checkout $PRIVATE_EXTENSIONS_TAG
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ../xtuple
 sudo ./scripts/build_app.js -d demo_dev -e ../private-extensions/source/bi
 cd ..
-
 
 for NGINXCONFIG in /etc/nginx/sites-available/* ; do
   if ! grep -q /pentaho $NGINXCONFIG ; then
