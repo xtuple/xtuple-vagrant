@@ -14,7 +14,7 @@ to create virtual machines for several distinct purposes:
 
 Note that all of these virtual machines run Ubuntu Linux. In all cases you can connect to the xTuple Server and database from your host environment or from the virtual machine. The development setups allow you to edit source files in either environment, too, but you will have to build the application in the VM.
 
-xTuple strongly recommends that you use these virtual machines, particularly for development purposes.[*](#caveat)
+xTuple recommends that you use these virtual machines, particularly for development purposes.[*](#caveat)
 
 See the [xtuple-vagrant wiki](https://github.com/xtuple/xtuple-vagrant/wiki/Home) for instructions on getting started.
 
@@ -24,4 +24,4 @@ New to Github? Learn more about basic Github activities [here](https://help.gith
 
 #### Caveat
 
-* There may be problems using the desktop development VM for building and bundling releasable versions of the desktop clients.
+* The desktop development VM cannot currently be used to build and package the desktop clients _for release_. This VM is fine for day-to-day bug fixing and feature development.
