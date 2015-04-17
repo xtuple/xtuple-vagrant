@@ -47,7 +47,9 @@ echo "Beginning install script"
 bash scripts/install_xtuple.sh
 
 echo "Adding Vagrant PostgreSQL Access Rule"
-echo "host all all  0.0.0.0/0 trust" | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
+for PGDIR in /etc/postgresql/* ; do
+  echo "host all all  0.0.0.0/0 trust" | sudo tee -a $PGDIR/main/pg_hba.conf
+done
 
 echo "Restarting Postgres Database"
 sudo service postgresql restart
@@ -57,8 +59,10 @@ cdir /home/vagrant/dev
 sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev    \
                libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev \
                libxi-dev libxrandr-dev libxrender-dev gcc make
-sudo apt-get install -q -y --no-install-recommends ubuntu-desktop \
-               firefox firefox-gnome-support
+sudo apt-get install -q -y --no-install-recommends \
+              ubuntu-desktop unity-lens-applications unity-lens-files \
+              gnome-panel firefox firefox-gnome-support
+
 wget http://download.qt-project.org/official_releases/qt/4.8/4.8.6/qt-everywhere-opensource-src-4.8.6.tar.gz
 tar xvf qt-everywhere-opensource-src-4.8.6.tar.gz
 cdir qt-everywhere-opensource-src-4.8.6
