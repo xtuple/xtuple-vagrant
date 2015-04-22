@@ -125,14 +125,14 @@ sudo update-rc.d $SERVICE defaults 98
 sudo chmod +x /etc/init.d/$SERVICE
 
 # Bootstrap
-wget xtuple.com/bootstrap -qO- | sudo bash
+wget https://www.xtuple.com/bootstrap -qO- | sudo bash
 
 # Clone repos first.  Have trouble with git ssh authorization after xtuple-server install-dev is run (why?)
 git clone https://github.com/xtuple/xtuple-server.git
 git clone -b $XT_QTDEV_TOOLS_TAG git@github.com:$XREPO/xt-qtdev-tools.git
 git clone -b $XTUPLE_TAG https://github.com/$XREPO/xtuple.git --recursive
 git clone -b $XTUPLE_EXTENSIONS_TAG https://github.com/$XREPO/xtuple-extensions.git
-git clone -b $BI_OPEN_TAG https://github.com/$XREPO/bi-open.git 
+git clone -b $BI_OPEN_TAG https://github.com/$XREPO/bi-open.git
 git clone -b $BI_TAG git@github.com:$XREPO/bi.git
 git clone -b $PRIVATE_EXTENSIONS_TAG git@github.com:$XREPO/private-extensions.git
 
@@ -148,7 +148,7 @@ cd xtuple-extensions
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..
-  
+
 # Install xtuple
 cd xtuple
 npm install --quiet
@@ -185,7 +185,7 @@ cd ../../bi-open/scripts
 sudo bash build_bi.sh -l -c ../../xtuple/node-datasource/config.js -d demo_dev -P admin -p $CLUSTERPORT -o $CLUSTERPORT -g uscities.txt
 cd ../..
 
-# Install the bi commercial extension. 
+# Install the bi commercial extension.
 cd private-extensions
 git submodule update --init --recursive --quiet
 npm install --quiet
