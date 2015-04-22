@@ -132,14 +132,14 @@ sudo update-rc.d $SERVICE defaults 98
 sudo chmod +x /etc/init.d/$SERVICE
 
 # Bootstrap
-wget xtuple.com/bootstrap -qO- | sudo bash
+wget https://www.xtuple.com/bootstrap -qO- | sudo bash
 
 # Clone the repos
 cd /home/vagrant/dev
 git clone -b $XT_QTDEV_TOOLS_TAG git@github.com:$XREPO/xt-qtdev-tools.git
 git clone -b $XTUPLE_TAG https://github.com/$XREPO/xtuple.git --recursive
 git clone -b $XTUPLE_EXTENSIONS_TAG https://github.com/$XREPO/xtuple-extensions.git --recursive
-git clone -b $BI_OPEN_TAG https://github.com/$XREPO/bi-open.git 
+git clone -b $BI_OPEN_TAG https://github.com/$XREPO/bi-open.git
 
 # Install xtuple-server
 npm install -g xtuple-server
@@ -165,7 +165,7 @@ sudo xtuple-server install-dev --xt-demo --xt-adminpw admin --nginx-sslcnames $I
 CLUSTERPORT=$(pg_lsclusters -h | awk '/^./ { if ($2 != "main") { print $3; } }')
 
 # Add demo data, 24 months starting 2012-12
-cd /home/vagrant/dev 
+cd /home/vagrant/dev
 psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_functions.sql
 psql -U admin -p $CLUSTERPORT -d demo_dev -f  xt-qtdev-tools/populate/populate_ordertocash.sql
 psql -U admin -p $CLUSTERPORT -d demo_dev -c  "select dbtools.popordertocash('2012-12-01', 1);" >/dev/null 2>&1

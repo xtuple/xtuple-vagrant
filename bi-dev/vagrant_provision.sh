@@ -134,7 +134,7 @@ sudo update-rc.d $SERVICE defaults 98
 sudo chmod +x /etc/init.d/$SERVICE
 
 # Bootstrap
-wget xtuple.com/bootstrap -qO- | sudo bash
+wget https://www.xtuple.com/bootstrap -qO- | sudo bash
 
 cd /home/vagrant/dev
 
@@ -142,7 +142,7 @@ cd /home/vagrant/dev
 git clone https://github.com/xtuple/xtuple-server.git
 git clone https://github.com/jgunderson/xtuple.git --recursive
 git clone https://github.com/jgunderson/xtuple-extensions.git
-git clone https://github.com/jgunderson/bi-open.git 
+git clone https://github.com/jgunderson/bi-open.git
 git clone git@github.com:jgunderson/bi.git
 git clone git@github.com:jgunderson/private-extensions.git
 
@@ -159,7 +159,7 @@ git checkout $XTUPLE_EXTENSIONS_TAG
 git submodule update --init --recursive --quiet
 npm install --quiet
 cd ..
-  
+
 # Install xtuple
 cd xtuple
 git checkout $XTUPLE_TAG
@@ -191,8 +191,8 @@ cd ../..
 cd xtuple
 sudo ./scripts/build_app.js -d demo_dev -e ../xtuple-extensions/source/bi_open
 cd ..
-  
-# Install the bi commercial extension. 
+
+# Install the bi commercial extension.
 cd private-extensions
 git checkout $PRIVATE_EXTENSIONS_TAG
 git submodule update --init --recursive --quiet
