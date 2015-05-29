@@ -1,8 +1,8 @@
 xtHostOffset    = 1
 xtHostAddr      = "192.168.33.11"
-xtHostAppPort   = xtGuestAppPort  + xtPortOffset
+xtHostAppPort   = xtGuestAppPort  + xtHostOffset
 xtHostName      = "second-vm"
-xtHostRestPort  = xtGuestRestPort + xtPortOffset
-xtHostWebPort   = xtGuestWebPort  + xtPortOffset
+xtHostRestPort  = xtGuestRestPort + xtHostOffset
+xtHostWebPort   = xtGuestWebPort  + xtHostOffset
 
 xtVboxMemory    = "2048"
