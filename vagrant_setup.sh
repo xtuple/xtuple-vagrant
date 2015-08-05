@@ -61,6 +61,24 @@ cdir $XTUPLE_DIR                                        || die
 echo "Beginning install script"
 bash scripts/install_xtuple.sh -d $PGVER                || die
 
+#stolen from xtuple-server-core repository
+echo "Installing openRPT"
+cd /home/vagrant/dev
+git clone -q https://github.com/xtuple/openrpt.git |& \
+                                tee -a $logfile || die "Can't clone openrpt"
+apt-get install -qq --force-yes qt4-qmake libqt4-dev libqt4-sql-psql |& \
+                                tee -a $logfile || die "Can't install Qt"
+cd openrpt                                      || die "Can't cd openrpt"
+OPENRPT_VER=master #TODO: OPENRPT_VER=`latest stable release`
+git checkout -q $OPENRPT_VER |& tee -a $logfile || die "Can't checkout openrpt"
+log "Starting OpenRPT build (this will take a few minutes)..."
+qmake                        |& tee -a $logfile || die "Can't qmake openrpt"
+make > /dev/null             |& tee -a $logfile || die "Can't make openrpt"
+sudo mkdir -p /usr/local/bin                         || die "Can't make /usr/local/bin"
+sudo mkdir -p /usr/local/lib                         || die "Can't make /usr/local/lib"
+sudo tar cf - bin lib | sudo tar xf - -C /usr/local       || die "Can't install OpenRPT"
+ldconfig                     |& tee -a $logfile || die "ldconfig failed"
+
 echo "Adding Vagrant PostgreSQL Access Rule"
 echo "host all all  0.0.0.0/0 trust" | sudo tee -a /etc/postgresql/${PGVER}/main/pg_hba.conf
 
