@@ -16,7 +16,7 @@ xtGuestWebPort  = 8888
 xtGui           = false
 xtHostAddr      = "192.168.33.10"
 xtHostAppPort   = xtGuestAppPort  + xtHostOffset
-xtHostName      = "xtuple-server"
+xtHostName      = "xtuple-testvm"
 xtHostRestPort  = xtGuestRestPort + xtHostOffset
 xtHostWebPort   = xtGuestWebPort  + xtHostOffset
 xtPostgresVer   = "9.3"
@@ -96,6 +96,7 @@ Vagrant.configure("2") do |config|
 
     # Debug VM by booting in Gui mode
     v.gui = xtGui
+    v.name = xtHostName
 
     # If the host CPU does not have hardware virtualization support,
     # this will disable that setting in VirtualBox - only works on 32-bit OS
