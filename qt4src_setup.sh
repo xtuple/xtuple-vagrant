@@ -14,37 +14,54 @@ cdir() {
   cd $1
 }
 
-exitEarly() {
+die() {
   local RESULT=63
-  if [ $* -gt 0 ] ; then
+  if [ $# -gt 0 -a $(( $1 + 0 )) -ne 0 ] ; then
     RESULT=$1
     shift
   fi
-  echo $*
+  [ $# -gt 0 ] && echo $*
   exit $RESULT
 }
+
+usage() {
+  echo $PROG -h
+  echo $PROG [ -p postgresversion ] [ -d qtversion ]
+}
+
+while getopts "hp:q:" OPT ; do
+  case $OPT in
+    h) usage
+       exit 0
+       ;;
+    p) PGVER=$OPTARG
+       ;;
+    q) QTVER=$OPTARG
+       ;;
+  esac
+done
 
 # install git
 echo "Installing Git"
 sudo apt-get install git -y
 
-# this is temporary fix for the problem where Windows
+# this is a temporary fix for the problem where Windows
 # cannot translate the symlinks in the repository
 echo "Creating symlink to lib folder"
-cdir /home/vagrant/dev/xtuple/lib/
-rm module
-ln -s ../node_modules/ module
-git update-index --assume-unchanged module
+cdir /home/vagrant/dev/xtuple/lib/                      || die
+rm module                                               || die
+ln -s ../node_modules/ module                           || die
+git update-index --assume-unchanged module              || die
 
 echo "Creating symlink to application folder"
-cdir /home/vagrant/dev/xtuple/enyo-client/application/
-rm lib
-ln -s ../../lib/ lib
-git update-index --assume-unchanged lib
+cdir /home/vagrant/dev/xtuple/enyo-client/application   || die
+rm lib                                                  || die
+ln -s ../../lib/ lib                                    || die
+git update-index --assume-unchanged lib                 || die
 
-cdir $XTUPLE_DIR
-echo "Beginning install script"
-bash scripts/install_xtuple.sh
+cdir $XTUPLE_DIR                                        || die
+echo "Beginning install script"                         || die
+bash scripts/install_xtuple.sh -d $PGVER                || die
 
 echo "Adding Vagrant PostgreSQL Access Rule"
 for PGDIR in /etc/postgresql/* ; do
@@ -73,19 +90,34 @@ echo "Configuring Qt"
             -lkrb5 -webkit -nomake examples -nomake demos          \
             -confirm-license -fontconfig -opensource -continue
 echo "Building Qt 4.8.6--GO GET SOME COFFEE IT'S GOING TO BE A WHILE"
-make -j4                                || exitEarly 1 "Qt didn't build"
+make -j4                                || die 1 "Qt didn't build"
 
 echo "Installing Qt 4.8.6--Get another cup"
-sudo make -j1 install                   || exitEarly 1 "Qt didn't install"
+sudo make -j1 install                   || die 1 "Qt didn't install"
 
 echo "Compiling OPENRPT dependency"
 cdir /home/vagrant/dev/qt-client/openrpt
-/usr/local/Trolltech/Qt-4.8.6/bin/qmake || exitEarly 1 "openrpt didn't qmake"
-make -j4                                || exitEarly 1 "openrpt didn't build"
+/usr/local/Trolltech/Qt-4.8.6/bin/qmake || die 1 "openrpt didn't qmake"
+make -j4                                || die 1 "openrpt didn't build"
 echo "Compiling CSVIMP dependency"
 cdir ../csvimp
-/usr/local/Trolltech/Qt-4.8.6/bin/qmake || exitEarly 1 "csvmip didn't qmake"
-make -j4                                || exitEarly 1 "csvmip didn't build"
+/usr/local/Trolltech/Qt-4.8.6/bin/qmake || die 1 "csvimp didn't qmake"
+make -j4                                || die 1 "csvimp didn't build"
+echo "Compiling qt-client itself"
+cdir ..
+/usr/local/Trolltech/Qt-4.8.6/bin/qmake || die 1 "qt-client didn't qmake"
+make -j4                                || die 1 "qt-client didn't build"
+
+cdir /home/vagrant
+for STARTUPFILE in .profile .bashrc ; do
+  echo '[[ "$PATH" =~ Qt-4.8.6 ]] || export PATH=/usr/local/Trolltech/Qt-4.8.6/bin:$PATH' >> $STARTUPFILE
+done
+
+echo "Qt development environment finished!"
+echo "To get started cd /home/vagrant/dev/qt-client qmake then make to build xTuple desktop!"
+##end qtdev wizardry
+
+echo "The xTuple Server install script is done!"
 
 cdir /home/vagrant
 for STARTUPFILE in .profile .bashrc ; do

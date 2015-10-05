@@ -6,3 +6,4 @@ xtHostRestPort  = xtGuestRestPort + xtPortOffset
 xtHostWebPort   = xtGuestWebPort  + xtPortOffset
 
 xtVboxMemory    = "2048"
+xtVmName        = "show-this-in-virtualbox-gui"
