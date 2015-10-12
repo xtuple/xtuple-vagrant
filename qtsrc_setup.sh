@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 
 # fix for error message from Vagrant, but it may still show up
 if `tty -s`; then
@@ -67,10 +68,6 @@ sudo chmod go+rwX /usr/local/src                        || die
 
 cdir $XTUPLE_DIR                                        || die
 
-if ! grep -q QTVER scripts/install_xtuple.sh && [ "$QTVER" = 5 ] ; then
-  echo USING Qt 4 UNTIL install_xtuple.sh ACCEPTS -q
-  QTVER=4
-fi
 echo "Beginning install script"
 bash scripts/install_xtuple.sh -d $PGVER -q $QTVER      || die
 
@@ -89,27 +86,52 @@ sudo apt-get install -q -y --no-install-recommends firefox-gnome-support
 
 sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev    \
                libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev \
-               libxi-dev libxrandr-dev libxrender-dev gcc make          || die
+               libxi-dev libxrandr-dev libxrender-dev libcups2-dev libsm-dev  \
+               libxinerama-dev                                                \
+               gcc make                                                 || die
 
-if [ "$QTVER" -eq 5 ] ; then
-  sudo apt-get install -q -y qt5-qmake libqt5core5a libqt5designer5             \
-                             libqt5designercomponents5 libqt5gui5               \
-                             libqt5help5 libqt5network5 libqt5printsupport5     \
-                             libqt5script5 qtscript5-dev libqt5scripttools5     \
-                             libqt5sql5 libqt5sql5-odbc                         \
-                             libqt5sql5-psql libqt5webkit5 libqt5widgets5       \
-                             libqt5xml5 libqt5xmlpatterns5                      \
-                             libqt5webkit5-dev libqt5xmlpatterns5-dev           \
-                             qttools5-dev qttools5-dev-tools              || die
-  sudo mkdir           /usr/lib/x86_64-linux-gnu/qt5/plugins/designer
-  sudo chown $(whoami) /usr/lib/x86_64-linux-gnu/qt5/plugins/designer
-elif [ "$QTVER" -eq 4 ] ; then
-  sudo apt-get install -q -y qt4-qmake libqt4-dev-bin libqt4-dev libqtcore4     \
-                             libqtgui4 libqt4-designer libqt4-help libqt4-sql   \
-                             libqt4-network libqt4-script libqt4-scripttools    \
-                             libqt4-xml libqt4-xmlpatterns libqtwebkit4         \
-                                                                          || die
+cdir /home/vagrant/dev
+
+if [ "$QTVER" -eq 4 ] ; then
+  M=4 N=8 P=6
+  QTDOWNLOADURL=http://download.qt.io/official_releases/qt/$M.$N/$M.$N.$P/
+elif [ "$QTVER" -eq 5 ] ; then
+  M=5 N=5 P=0
+  QTDOWNLOADURL=http://download.qt.io/official_releases/qt/$M.$N/$M.$N.$P/single/$TARFILE
 fi
+
+TARFILE=qt-everywhere-opensource-src-$M.$N.$P.tar.gz
+wget $QTDOWNLOADURL/$TARFILE
+
+QTDIR=/usr/local/Trolltech/Qt-$M.$N.$P
+tar xvf $TARFILE
+cdir $(basename $TARFILE .tar.gz)
+
+echo "Configuring Qt"
+if [ "$QTVER" -eq 4 ] ; then
+  ./configure -qt-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
+              -plugin-sql-psql -plugin-sql-odbc -plugin-sql-sqlite   \
+              -lkrb5 -webkit -nomake examples -nomake demos          \
+              -confirm-license -fontconfig -opensource -continue        || die 1 "Qt didn't configure"
+else
+  ./configure -qt-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
+              -plugin-sql-psql -plugin-sql-odbc -plugin-sql-sqlite   \
+              -lkrb5 -webkit -nomake examples -nomake demos          \
+              -confirm-license -fontconfig -opensource -continue       || die 1 "Qt didn't configure"
+fi
+
+echo "Building Qt -- GO GET SOME COFFEE IT'S GOING TO BE A WHILE"
+make -j4                                || die 1 "Qt didn't build"
+
+echo "Installing Qt -- Get another cup"
+sudo make -j1 install                   || die 1 "Qt didn't install"
+# this shouldn't be necessary:
+sudo chmod -R go+rX /usr/local/Trolltech/Qt-4.8.6
+
+PATH=$QTDIR/bin:$PATH
+for STARTUPFILE in .profile .bashrc ; do
+  echo "PATH=$QTDIR/bin:\$PATH" >> $STARTUPFILE
+done
 
 echo "Compiling OPENRPT dependency"
 cdir /home/vagrant/dev/qt-client/openrpt
