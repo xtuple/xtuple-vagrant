@@ -116,7 +116,7 @@ if [ "$QTVER" -eq 4 ] ; then
 else
   ./configure -qt-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
               -plugin-sql-psql -plugin-sql-odbc -plugin-sql-sqlite   \
-              -lkrb5 -webkit -nomake examples -nomake demos          \
+              -lkrb5 -webkit -nomake examples -nomake qtwebengine    \
               -confirm-license -fontconfig -opensource -continue       || die 1 "Qt didn't configure"
 fi
 
