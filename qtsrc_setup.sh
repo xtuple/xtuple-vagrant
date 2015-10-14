@@ -125,26 +125,29 @@ make -j4                                || die 1 "Qt didn't build"
 
 echo "Installing Qt -- Get another cup"
 sudo make -j1 install                   || die 1 "Qt didn't install"
+
 # this shouldn't be necessary:
-sudo chmod -R go+rX /usr/local/Trolltech/Qt-4.8.6
+sudo chmod -R go+rX $QTDIR
 
 PATH=$QTDIR/bin:$PATH
 for STARTUPFILE in .profile .bashrc ; do
   echo "PATH=$QTDIR/bin:\$PATH" >> $STARTUPFILE
 done
 
+MAKEJOBS=$(nproc)
+
 echo "Compiling OPENRPT dependency"
 cdir /home/vagrant/dev/qt-client/openrpt
 qmake                                   || die 1 "openrpt didn't qmake"
-make -j4                                || die 1 "openrpt didn't build"
+make -j$MAKEJOBS                        || die 1 "openrpt didn't build"
 echo "Compiling CSVIMP dependency"
 cdir ../csvimp
 qmake                                   || die 1 "csvimp didn't qmake"
-make -j4                                || die 1 "csvimp didn't build"
+make -j$MAKEJOBS                        || die 1 "csvimp didn't build"
 echo "Compiling qt-client itself"
 cdir ..
 qmake                                   || die 1 "qt-client didn't qmake"
-make -j4                                || die 1 "qt-client didn't build"
+make -j$MAKEJOBS                        || die 1 "qt-client didn't build"
 
 echo "$HOME/dev/qt-client/openrpt/lib
 $HOME/dev/qt-client/lib" | sudo tee -a /etc/ld.so.conf.d/xtuple.conf
