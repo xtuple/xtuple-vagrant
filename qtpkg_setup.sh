@@ -106,6 +106,7 @@ if [ "$QTVER" -eq 5 ] ; then
 elif [ "$QTVER" -eq 4 ] ; then
   sudo apt-get install -q -y qt4-qmake libqt4-dev-bin libqt4-dev libqtcore4     \
                              libqtgui4 libqt4-designer libqt4-help libqt4-sql   \
+                             libqt4-sql-psql                                    \
                              libqt4-network libqt4-script libqt4-scripttools    \
                              libqt4-xml libqt4-xmlpatterns libqtwebkit4         \
                                                                           || die
