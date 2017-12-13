@@ -7,7 +7,7 @@
 #   then edit xtHostOffset, xtHostAddr, xtHostName, xtHostSetupFile, xtVMName in xtlocal.rb
 xtHostOffset    = 0
 
-xtBox           = "ubuntu/trusty64"
+xtBox           = "ubuntu/xenial64"
 xtBoxUrl        = nil
 xtForwardX11    = true
 xtGuestAppPort  = 8443
@@ -23,7 +23,7 @@ xtHostWebPort   = xtGuestWebPort  + xtHostOffset
 xtPostgresVer   = "9.3"
 xtQtVer         = "5"
 xtSourceDir     = "../../dev"
-xtSourceMountPt = "/home/vagrant/dev"
+xtSourceMountPt = "/home/ubuntu/dev"
 xtVagrantVer    = ">= 1.6.4"
 xtVmName        = xtHostName
 xtVboxGuestAU   = true

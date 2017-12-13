@@ -7,9 +7,9 @@ if `tty -s`; then
 fi
 
 PROG=`basename $0`
-XTUPLE_DIR=/home/vagrant/dev/xtuple/
+XTUPLE_DIR=$HOME/dev/xtuple/
 PGVER=9.3
-QTVER=4
+QTVER=5
 
 cdir() {
   echo "Changing directory to $1"
@@ -51,13 +51,13 @@ sudo apt-get install git -y
 # cannot translate the symlinks in the repository
 cat <<SKIP
 echo "Creating symlink to lib folder"
-cdir /home/vagrant/dev/xtuple/lib                       || die
+cdir $HOME/dev/xtuple/lib                       || die
 rm module                                               || die
 ln -s ../node_modules module                            || die
 git update-index --assume-unchanged module              || die
 
 echo "Creating symlink to application folder"
-cdir /home/vagrant/dev/xtuple/enyo-client/application   || die
+cdir $HOME/dev/xtuple/enyo-client/application   || die
 rm lib                                                  || die
 ln -s ../../lib lib                                     || die
 git update-index --assume-unchanged lib                 || die
@@ -84,26 +84,31 @@ sudo apt-get install -q -y --no-install-recommends \
 # non-fatal
 sudo apt-get install -q -y --no-install-recommends firefox-gnome-support
 
-sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev    \
-               libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev \
-               libxi-dev libxrandr-dev libxrender-dev libcups2-dev libsm-dev  \
-               libxinerama-dev                                                \
-               gcc make                                                 || die
+sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev      \
+               xorg libx11-dev libxcursor-dev libxext-dev libxfixes-dev         \
+               libxft-dev libxdamage-dev ibxi-dev libxrandr-dev libxrender-dev  \
+               libxinerama-dev libx11-xcb-dev "^libxcb.*" libxcomposite-dev     \
+               libasound2-dev libegl1-mesa-dev libgl1-mesa-dev libglu1-mesa-dev \
+               libgstreamer0.10-dev libgstreamer1.0-dev libcups2-dev libsm-dev  \
+               libgstreamer-plugins-base0.10-dev libgstreamer-plugins-base1.0-dev \
+               libicu-dev libldap2-dev libmysqlclient-dev libossp-uuid-dev      \
+               libpam0g-dev libpam-dev libperl-dev libreadline6-dev             \
+               libsqlite0-dev libssl-dev libwebp-dev libxml2-dev libxslt1-dev   \
+               libxslt-dev mesa-common-dev                                      \
+               gcc make bison build-essential flex g++ gperf icu-devtools       \
+               perl python readline-common ruby unixodbc-dev xorg zlib1g-dev    || die
 
-cdir /home/vagrant/dev
+cdir $HOME/dev
 
-if [ "$QTVER" -eq 4 ] ; then
-  M=4 N=8 P=6
-  QTDOWNLOADURL=http://download.qt.io/official_releases/qt/$M.$N/$M.$N.$P/
-elif [ "$QTVER" -eq 5 ] ; then
-  M=5 N=5 P=0
-  QTDOWNLOADURL=http://download.qt.io/official_releases/qt/$M.$N/$M.$N.$P/single/$TARFILE
+if [ "$QTVER" -eq 5 ] ; then
+  M=5 N=5 P=1
+  QTDOWNLOADURL=http://download.qt.io/archive/qt/$M.$N/$M.$N.$P/single/$TARFILE
 fi
 
 TARFILE=qt-everywhere-opensource-src-$M.$N.$P.tar.gz
 wget $QTDOWNLOADURL/$TARFILE
 
-QTDIR=/usr/local/Trolltech/Qt-$M.$N.$P
+QTDIR=$HOME/dev/Qt-$M.$N.$P
 tar xvf $TARFILE
 cdir $(basename $TARFILE .tar.gz)
 
@@ -137,7 +142,7 @@ done
 MAKEJOBS=$(nproc)
 
 echo "Compiling OPENRPT dependency"
-cdir /home/vagrant/dev/qt-client/openrpt
+cdir $HOME/dev/qt-client/openrpt
 qmake                                   || die 1 "openrpt didn't qmake"
 make -j$MAKEJOBS                        || die 1 "openrpt didn't build"
 echo "Compiling CSVIMP dependency"
