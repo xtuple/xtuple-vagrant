@@ -1,14 +1,16 @@
 #!/bin/sh
 
 # fix for error message from Vagrant, but it may still show up
-if `tty -s`; then
+if $(tty -s); then
   mesg n
 fi
 
-PROG=`basename $0`
-XTUPLE_DIR=/home/vagrant/dev/xtuple/
-PGVER=9.3
+PROG=${PROG:-$(basename $0)}
+
+XTUPLE_DIR=$HOME/dev/xtuple/
+PGVER=9.5
 QTVER=5
+WARNINGS=
 
 cdir() {
   echo "Changing directory to $1"
@@ -23,6 +25,10 @@ die() {
   fi
   [ $# -gt 0 ] && echo $*
   exit $RESULT
+}
+
+sicken() {
+  WARNINGS="$WARNINGS;$@"
 }
 
 usage() {
@@ -50,29 +56,14 @@ sudo apt-get install git -y
 # cannot translate the symlinks in the repository
 cat <<SKIP
 echo "Creating symlink to lib folder"
-cdir /home/vagrant/dev/xtuple/lib                       || die
+cdir $HOME/dev/xtuple/lib                       || die
 rm module                                               || die
 ln -s ../node_modules module                            || die
 git update-index --assume-unchanged module              || die
 
 echo "Creating symlink to application folder"
-cdir /home/vagrant/dev/xtuple/enyo-client/application   || die
+cdir $HOME/dev/xtuple/enyo-client/application   || die
 rm lib                                                  || die
 ln -s ../../lib lib                                     || die
 git update-index --assume-unchanged lib                 || die
 SKIP
-
-#let install_xtuple.sh build openrpt without requiring a fix to the script
-sudo chmod go+rwX /usr/local/src                        || die
-
-cdir $XTUPLE_DIR                                        || die
-echo "Beginning install script"
-bash scripts/install_xtuple.sh -d $PGVER -q $QTVER      || die
-
-echo "Adding Vagrant PostgreSQL Access Rule"
-echo "host all all  0.0.0.0/0 trust" | sudo tee -a /etc/postgresql/${PGVER}/main/pg_hba.conf
-
-echo "Restarting Postgres Database"
-sudo service postgresql restart
-
-echo "The xTuple vagrant setup script is done!"
