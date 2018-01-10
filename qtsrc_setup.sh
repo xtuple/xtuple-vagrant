@@ -16,7 +16,7 @@ sudo apt-get install -q -y --no-install-recommends firefox-gnome-support
 
 sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev    \
                libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev \
-               libxi-dev libxrandr-dev libxrender-dev gcc make          || sicken installing dev dependencies
+               libxi-dev libxrandr-dev libxrender-dev gcc make xsltproc || sicken installing dev dependencies
 
 sudo apt-get install -q -y xorg libxdamage-dev \
                libxinerama-dev libx11-xcb-dev "^libxcb.*" libxcomposite-dev     \

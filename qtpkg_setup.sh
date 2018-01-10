@@ -16,9 +16,9 @@ sudo apt-get install -q -y --no-install-recommends firefox-gnome-support
 
 sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev    \
                libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev \
-               libxi-dev libxrandr-dev libxrender-dev gcc make          || sicken installing dev dependencies
+               libxi-dev libxrandr-dev libxrender-dev gcc make xsltproc || sicken installing dev dependencies
 
-sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ wily main universe"
+sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ xenial main universe"
 sudo apt-get update
 sudo apt-get install -q -y qt5-qmake libqt5core5a libqt5designer5             \
                            libqt5designercomponents5 libqt5gui5               \
@@ -33,10 +33,11 @@ sudo apt-get install -q -y qt5-qmake libqt5core5a libqt5designer5             \
 # split for now - this part doesn't work consistently
 sudo apt-get install -q -y libqt5websockets5-dev || sicken installing qt5 websockets
 sudo apt-get install -q -y webchannel            || sicken installing webchannel
-sudo mkdir           /usr/lib/x86_64-linux-gnu/qt5/plugins/designer
+sudo mkdir -p        /usr/lib/x86_64-linux-gnu/qt5/plugins/designer
 sudo chown $(whoami) /usr/lib/x86_64-linux-gnu/qt5/plugins/designer
 
 MAKEJOBS=$(nproc)
+export QT_SELECT=5
 
 echo "Compiling OPENRPT dependency"
 cdir $HOME/dev/qt-client/openrpt
