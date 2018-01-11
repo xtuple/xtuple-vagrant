@@ -37,30 +37,34 @@ if [ "$QTVER" -eq 5 ] ; then
   QTDOWNLOADURL=http://download.qt.io/archive/qt/$M.$N/$M.$N.$P/single/$TARFILE
 fi
 
+QTDIR=$HOME/dev/Linux_Qt/Qt$M.$N.$P
 TARFILE=qt-everywhere-opensource-src-$M.$N.$P.tar.gz
-wget $QTDOWNLOADURL/$TARFILE
+QTSRC=$HOME/dev/$(basename $TARFILE .tar.gz)
 
-QTDIR=$HOME/dev/Qt-$M.$N.$P
-tar xvf $TARFILE
-cdir $(basename $TARFILE .tar.gz)
+[ -e $TARFILE ] || wget $QTDOWNLOADURL/$TARFILE
+[ -d $QTSRC ]   || tar xvf $TARFILE
 
-echo "Configuring Qt"
-if [ "$QTVER" -eq 5 ] ; then
-  ./configure -qt-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
-              -plugin-sql-psql -plugin-sql-odbc -plugin-sql-sqlite   \
-              -lkrb5 -webkit -nomake examples                        \
-              -confirm-license -fontconfig -opensource -continue       || die 1 "Qt didn't configure"
+if [ -x $QTDIR/bin/qmake ] ; then
+  echo "Qt appears to be built already"
+else
+  cdir $QTSRC
+  echo "Configuring Qt"
+  if [ "$QTVER" -eq 5 ] ; then
+    ./configure -release -prefix $QTDIR -openssl -fontconfig -nomake examples \
+                -qt-zlib -qt-libpng -qt-libjpeg                               \
+                -qt-sql-psql -qt-sql-odbc -qt-sql-sqlite                      \
+                -confirm-license -opensource -continue || die 1 "Qt didn't configure"
+
+    MAKEFLAGS=-j$(nproc)
+    echo "Building Qt -- Get a cup of coffee"
+    make                                 || die 1 "Qt didn't build"
+    echo "Installing Qt -- Get another cup"
+    sudo make -j1 install                || die 1 "Qt didn't install"
+    sudo chmod -R go+rX $QTDIR
+
+  fi
+  cd $HOME/dev
 fi
-
-MAKEFLAGS=-j$(nproc)
-
-echo "Building Qt -- GO GET SOME COFFEE IT'S GOING TO BE A WHILE"
-make                                 || die 1 "Qt didn't build"
-
-echo "Installing Qt -- Get another cup"
-sudo make -j1 install                || die 1 "Qt didn't install"
-
-sudo chmod -R go+rX $QTDIR
 
 PATH=$QTDIR/bin:$PATH
 for STARTUPFILE in .profile .bashrc ; do
