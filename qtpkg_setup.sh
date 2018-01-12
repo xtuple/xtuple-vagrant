@@ -5,7 +5,7 @@ VAGRANTPREFIX=/vagrant
 if [ ! -e $VAGRANTPREFIX/webdev_setup.sh ] ; then
   VAGRANTPREFIX=.
 fi
-source $VAGRANTPREFIX/webdev_setup.sh
+source $VAGRANTPREFIX/webdev_setup.sh *@
 
 sudo apt-get install -q -y --no-install-recommends \
               ubuntu-desktop unity-lens-applications unity-lens-files \

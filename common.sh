@@ -8,7 +8,7 @@ fi
 PROG=${PROG:-$(basename $0)}
 
 XTUPLE_DIR=$HOME/dev/xtuple/
-PGVER=9.5
+PGVER=9.3
 QTVER=5
 WARNINGS=
 

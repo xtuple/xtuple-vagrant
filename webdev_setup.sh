@@ -5,7 +5,7 @@ VAGRANTPREFIX=/vagrant
 if [ ! -e $VAGRANTPREFIX/common.sh ] ; then
   VAGRANTPREFIX=.
 fi
-source $VAGRANTPREFIX/common.sh
+source $VAGRANTPREFIX/common.sh *@
 
 #let install_xtuple.sh build openrpt without requiring a fix to the script
 sudo chmod go+rwX /usr/local/src                        || die

@@ -5,4 +5,4 @@ VAGRANTPREFIX=/vagrant
 if [ ! -e $VAGRANTPREFIX/common.sh ] ; then
   VAGRANTPREFIX=.
 fi
-source $VAGRANTPREFIX/common.sh
+source $VAGRANTPREFIX/common.sh *@
