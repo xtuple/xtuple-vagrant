@@ -120,7 +120,7 @@ for mobile-web client development. You can override this by changing the
 `xtHostSetupFile`:
 
 - `mvdev_setup.sh` sets up the VM for developing the mobile web client.
-- `qt4src_setup.sh` downloads the source code for Qt 4, then compiles
+- `qtsrc_setup.sh` downloads the source code for Qt 4, then compiles
   and installs it.  This takes a long time but is similar to the
   configuration we use to build the desktop client for releases.
   The resulting VM may be used for both desktop and mobile web
