@@ -34,7 +34,7 @@ cdir $HOME/dev
 
 if [ "$QTVER" -eq 5 ] ; then
   M=5 N=6 P=3
-  QTDOWNLOADURL=http://download.qt.io/archive/qt/$M.$N/$M.$N.$P/single/$TARFILE
+  QTDOWNLOADURL=http://download.qt.io/archive/qt/$M.$N/$M.$N.$P/single
 fi
 
 QTDIR=$HOME/dev/Linux_Qt/Qt$M.$N.$P
