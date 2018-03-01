@@ -38,11 +38,11 @@ if [ "$QTVER" -eq 5 ] ; then
 fi
 
 QTDIR=$HOME/dev/Linux_Qt/Qt$M.$N.$P
-TARFILE=qt-everywhere-opensource-src-$M.$N.$P.tar.gz
-QTSRC=$HOME/dev/$(basename $TARFILE .tar.gz)
+TARFILE=qt-everywhere-opensource-src-$M.$N.$P.tar.xz
+QTSRC=$HOME/dev/$(basename $TARFILE .tar.xz)
 
 [ -e $TARFILE ] || wget $QTDOWNLOADURL/$TARFILE
-[ -d $QTSRC ]   || tar xvf $TARFILE
+[ -d $QTSRC ]   || tar xvfJ $TARFILE
 
 if [ -x $QTDIR/bin/qmake ] ; then
   echo "Qt appears to be built already"
