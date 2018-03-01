@@ -125,7 +125,7 @@ for mobile-web client development. You can override this by changing the
   configuration we use to build the desktop client for releases.
   The resulting VM may be used for both desktop and mobile web
   client development.
-- Create your own script to set up a VM for a differeutn purpose.
+- Create your own script to set up a VM for a different purpose.
 
 ### Connect to the Virtual Machine
 
