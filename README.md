@@ -156,7 +156,7 @@ Start the datasource:
 Launch your local browser and navigate to application using localhost
 `http://localhost:8888` or the static IP address of the the virtual
 machine `http://192.168.33.10:8888`. You will need to use a different
-IP address if you changed `xtHostAddr` in your `xtlocal.rb`.
+IP address or port if you changed `xtHostAddr` or `xtHostOffset` in your `xtlocal.rb`.
 
 The default username and password to your local application are `admin`
 
