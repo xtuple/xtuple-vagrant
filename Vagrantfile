@@ -23,7 +23,7 @@ xtHostWebPort   = xtGuestWebPort  + xtHostOffset
 xtPostgresVer   = "9.3"
 xtQtVer         = "5"
 xtSourceDir     = "../../dev"
-xtSourceMountPt = "/home/ubuntu/dev"
+xtSourceMountPt = "/home/vagrant/dev"
 xtVagrantVer    = ">= 1.6.4"
 xtVmName        = xtHostName
 xtVboxGuestAU   = true
