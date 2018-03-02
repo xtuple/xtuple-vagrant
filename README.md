@@ -88,7 +88,7 @@ There is a list of variables at the top of the `Vagrantfile`. You can override t
 
     host $ cat 'xtVboxMemory = "2048"' > xtlocal.rb
 
-One common case is configuring a second or third VM running on a single host. This is easy to do. You must overrride the network address of the VM and the network ports that the host forwards to the VM. To assign these ports manually, change the `xtlocal.rb` file to look like this:
+One common case is configuring a second or third VM running on a single host. This is easy to do. You must override the network address of the VM and the network ports that the host forwards to the VM. To assign these ports manually, change the `xtlocal.rb` file to look like this:
 
     xtHostAddr      = "192.168.33.11"
     xtHostAppPort   = 8444
