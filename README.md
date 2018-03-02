@@ -62,10 +62,8 @@ Clone your forks of the `xtuple` and `xtuple-extensions` repositories to a direc
     host $ cd dev
     host $ git clone --recursive https://github.com/<your-github-username>/xtuple.git
     host $ git clone --recursive https://github.com/<your-github-username>/xtuple-extensions.git
-    host $ #and the following only if you plan to change them
+    host $ # and the following if you plan to work with qt-client (note: openrpt and csvimp are submodules in qt-client)
     host $ git clone --recursive https://github.com/<your-github-username>/qt-client.git
-    host $ git clone --recursive https://github.com/<your-github-username>/openrpt.git
-    host $ git clone --recursive https://github.com/<your-github-username>/csvimp.git
 
 Clone xtuple's `xtuple-vagrant` repository in a separate directory adjacent to your development folder:
 
