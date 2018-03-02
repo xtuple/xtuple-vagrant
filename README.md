@@ -191,7 +191,7 @@ the xTuple ERP desktop client application.
 
 Qt Creator is a good IDE for working with Qt projects but we at
 xTuple have had trouble getting it to work properly.  The
-`qtkpt_setup.sh` and `qt4src_setup.sh` scripts install Qt Creator
+`qtkpt_setup.sh` and `qtsrc_setup.sh` scripts install Qt Creator
 for you but you do not have to use it. There are a few things you
 need to know:
 
