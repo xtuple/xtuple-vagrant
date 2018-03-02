@@ -6,3 +6,4 @@ dev
 .git
 .DS_Store
 xtlocal.rb
+*.log

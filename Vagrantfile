@@ -7,7 +7,7 @@
 #   then edit xtHostOffset, xtHostAddr, xtHostName, xtHostSetupFile, xtVMName in xtlocal.rb
 xtHostOffset    = 0
 
-xtBox           = "ubuntu/trusty64"
+xtBox           = "ubuntu/xenial64"
 xtBoxUrl        = nil
 xtForwardX11    = true
 xtGuestAppPort  = 8443
@@ -18,7 +18,7 @@ xtHostAddr      = "192.168.33.10"
 xtHostAppPort   = xtGuestAppPort  + xtHostOffset
 xtHostName      = "xtuple-testvm"
 xtHostRestPort  = xtGuestRestPort + xtHostOffset
-xtHostSetupFile = "mwdev_setup.sh"
+xtHostSetupFile = "webdev_setup.sh"
 xtHostWebPort   = xtGuestWebPort  + xtHostOffset
 xtPostgresVer   = "9.3"
 xtQtVer         = "5"

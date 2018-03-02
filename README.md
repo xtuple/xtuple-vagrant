@@ -62,10 +62,8 @@ Clone your forks of the `xtuple` and `xtuple-extensions` repositories to a direc
     host $ cd dev
     host $ git clone --recursive https://github.com/<your-github-username>/xtuple.git
     host $ git clone --recursive https://github.com/<your-github-username>/xtuple-extensions.git
-    host $ #and the following only if you plan to change them
+    host $ # and the following if you plan to work with qt-client (note: openrpt and csvimp are submodules in qt-client)
     host $ git clone --recursive https://github.com/<your-github-username>/qt-client.git
-    host $ git clone --recursive https://github.com/<your-github-username>/openrpt.git
-    host $ git clone --recursive https://github.com/<your-github-username>/csvimp.git
 
 Clone xtuple's `xtuple-vagrant` repository in a separate directory adjacent to your development folder:
 
@@ -88,7 +86,7 @@ There is a list of variables at the top of the `Vagrantfile`. You can override t
 
     host $ cat 'xtVboxMemory = "2048"' > xtlocal.rb
 
-One common case is configuring a second or third VM running on a single host. This is easy to do. You must overrride the network address of the VM and the network ports that the host forwards to the VM. To assign these ports manually, change the `xtlocal.rb` file to look like this:
+One common case is configuring a second or third VM running on a single host. This is easy to do. You must override the network address of the VM and the network ports that the host forwards to the VM. To assign these ports manually, change the `xtlocal.rb` file to look like this:
 
     xtHostAddr      = "192.168.33.11"
     xtHostAppPort   = 8444
@@ -120,12 +118,12 @@ for mobile-web client development. You can override this by changing the
 `xtHostSetupFile`:
 
 - `mvdev_setup.sh` sets up the VM for developing the mobile web client.
-- `qt4src_setup.sh` downloads the source code for Qt 4, then compiles
+- `qtsrc_setup.sh` downloads the source code for Qt 4, then compiles
   and installs it.  This takes a long time but is similar to the
   configuration we use to build the desktop client for releases.
   The resulting VM may be used for both desktop and mobile web
   client development.
-- Create your own script to set up a VM for a differeutn purpose.
+- Create your own script to set up a VM for a different purpose.
 
 ### Connect to the Virtual Machine
 
@@ -156,7 +154,7 @@ Start the datasource:
 Launch your local browser and navigate to application using localhost
 `http://localhost:8888` or the static IP address of the the virtual
 machine `http://192.168.33.10:8888`. You will need to use a different
-IP address if you changed `xtHostAddr` in your `xtlocal.rb`.
+IP address or port if you changed `xtHostAddr` or `xtHostOffset` in your `xtlocal.rb`.
 
 The default username and password to your local application are `admin`
 
@@ -191,7 +189,7 @@ the xTuple ERP desktop client application.
 
 Qt Creator is a good IDE for working with Qt projects but we at
 xTuple have had trouble getting it to work properly.  The
-`qtkpt_setup.sh` and `qt4src_setup.sh` scripts install Qt Creator
+`qtkpt_setup.sh` and `qtsrc_setup.sh` scripts install Qt Creator
 for you but you do not have to use it. There are a few things you
 need to know:
 
