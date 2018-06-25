@@ -3,11 +3,11 @@
 # To customize: create xtlocal.rb in the current directory
 #               containing assignments to override these defaults
 # xtHostOffset is a convenience variable.
-#   $ egrep ^xtHost Vagrantfile > xtlocal.rb
-#   then edit xtHostOffset, xtHostAddr, xtHostName
+#   $ egrep "^xt(Host|VmName)" Vagrantfile > xtlocal.rb
+#   then edit xtHostOffset, xtHostAddr, xtHostName, xtHostSetupFile, xtVMName in xtlocal.rb
 xtHostOffset    = 0
 
-xtBox           = "hashicorp/precise64"
+xtBox           = "ubuntu/xenial64"
 xtBoxUrl        = nil
 xtForwardX11    = true
 xtGuestAppPort  = 8443
@@ -16,12 +16,16 @@ xtGuestWebPort  = 8888
 xtGui           = false
 xtHostAddr      = "192.168.33.10"
 xtHostAppPort   = xtGuestAppPort  + xtHostOffset
-xtHostName      = "xtuple-server"
+xtHostName      = "xtuple-testvm"
 xtHostRestPort  = xtGuestRestPort + xtHostOffset
+xtHostSetupFile = "webdev_setup.sh"
 xtHostWebPort   = xtGuestWebPort  + xtHostOffset
+xtPostgresVer   = "9.5"
+xtQtVer         = "5"
 xtSourceDir     = "../../dev"
 xtSourceMountPt = "/home/vagrant/dev"
 xtVagrantVer    = ">= 1.6.4"
+xtVmName        = xtHostName
 xtVboxGuestAU   = true
 xtVboxGuestNR   = true
 xtVboxMemory    = "4096"
@@ -95,6 +99,7 @@ Vagrant.configure("2") do |config|
 
     # Debug VM by booting in Gui mode
     v.gui = xtGui
+    v.name = xtVmName
 
     # If the host CPU does not have hardware virtualization support,
     # this will disable that setting in VirtualBox - only works on 32-bit OS
@@ -111,7 +116,7 @@ Vagrant.configure("2") do |config|
 
   # Run install script virtual machine is created
   # This forces the script to *not* be run as sudo
-  config.vm.provision "shell", path: "vagrant_setup.sh"
+  config.vm.provision "shell", path: xtHostSetupFile, privileged: false, args: [ "-p", xtPostgresVer, "-q", xtQtVer ]
 
   config.ssh.forward_x11 = xtForwardX11
 
