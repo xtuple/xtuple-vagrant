@@ -33,7 +33,7 @@ sudo apt-get install -q -y xorg libxdamage-dev \
 cdir $HOME/dev
 
 if [ "$QTVER" -eq 5 ] ; then
-  M=5 N=6 P=3
+  M=5 N=5 P=1
   QTDOWNLOADURL=http://download.qt.io/archive/qt/$M.$N/$M.$N.$P/single
 fi
 
