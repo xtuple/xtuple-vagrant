@@ -11,24 +11,32 @@ sudo apt-get install -q -y --no-install-recommends \
               ubuntu-desktop unity-lens-applications unity-lens-files \
               gnome-panel firefox                                       || die
 
-# non-fatal
 sudo apt-get install -q -y --no-install-recommends firefox-gnome-support
 
-sudo apt-get install -q -y libfontconfig1-dev libkrb5-dev libfreetype6-dev    \
-               libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev \
-               libxi-dev libxrandr-dev libxrender-dev gcc make xsltproc || sicken installing dev dependencies
+sudo apt-get install -q -y \
+      bison             build-essential flex            g++                \
+      gcc               gperf           icu-devtools    make               \
+      mesa-common-dev   perl            python          readline-common    \
+      ruby              unixodbc-dev    xorg            xsltproc           \
+      zlib1g-dev        || sicken installing development tools
 
-sudo apt-get install -q -y xorg libxdamage-dev \
-               libxinerama-dev libx11-xcb-dev "^libxcb.*" libxcomposite-dev     \
-               libasound2-dev libegl1-mesa-dev libgl1-mesa-dev libglu1-mesa-dev \
-               libgstreamer0.10-dev libgstreamer1.0-dev libcups2-dev libsm-dev  \
-               libgstreamer-plugins-base0.10-dev libgstreamer-plugins-base1.0-dev \
-               libicu-dev libldap2-dev libmysqlclient-dev libossp-uuid-dev      \
-               libpam0g-dev libpam-dev libperl-dev libreadline6-dev             \
-               libsqlite0-dev libssl-dev libwebp-dev libxml2-dev libxslt1-dev   \
-               libxslt-dev mesa-common-dev                                      \
-               bison build-essential flex g++ gperf icu-devtools       \
-               perl python readline-common ruby unixodbc-dev xorg zlib1g-dev    || sicken installing qt prereqs
+sudo apt-get install -q -y \
+      libasound2-dev     libcap-dev             libcups2-dev                  \
+      libdbus-1-dev      libegl1-mesa-dev       libfontconfig1-dev            \
+      libfreetype6-dev   libgl1-mesa-dev        libglu1-mesa-dev              \
+      libicu-dev         libkrb5-dev            libldap2-dev                  \
+      libmysqlclient-dev libossp-uuid-dev       libpci-dev                    \
+      libperl-dev        libreadline6-dev       libsm-dev                     \
+      libsqlite0-dev     libssl-dev             libudev-dev                   \
+      libwebp-dev        libx11-dev             libx11-xcb-dev                \
+      libxcomposite-dev  libxcursor-dev         libxdamage-dev                \
+      libxext-dev        libxfixes-dev          libxft-dev                    \
+      libxi-dev          libxinerama-dev        libxml2-dev                   \
+      libxrandr-dev      libxrender-dev         libxslt-dev                   \
+      libxslt1-dev       libxtst-dev            libxtst0dev                   \
+      "^libgstreamer-plugins-base.*-dev"        "^libgstreamer.*-dev"         \
+      "^libnss.*-dev"    "^libpam.*-dev"        "^libxcb.*"                   \
+  || sicken installing qt prereqs
 
 cdir $HOME/dev
 
