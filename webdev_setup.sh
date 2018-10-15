@@ -33,7 +33,6 @@ esac
 
 sudo apt-get --quiet --quiet update
 
-PLV8PKG="postgresql-${PGVER}-plv8"
 if [ $PGVER != 9.1 ] ; then
   sudo apt-get --quiet --assume-yes remove       \
     postgresql-9.1 postgresql-server-dev-9.1     \
@@ -41,14 +40,13 @@ if [ $PGVER != 9.1 ] ; then
     postgresql-9.1-asn1oid postgresql-9.1-plv8 2>&1
 fi
 sudo apt-get --quiet --quiet --assume-yes install \
-  build-essential curl libssl-dev xvfb            \
+  build-essential curl libssl-dev xvfb xsltproc   \
   python-software-properties software-properties-common
 
 sudo apt-get --quiet --quiet --assume-yes                            \
              --allow-downgrades --allow-change-held-packages install \
   postgresql-${PGVER} postgresql-server-dev-${PGVER}                 \
-  postgresql-${PGVER}-asn1oid postgresql-contrib-${PGVER}            \
-  ${PLV8PKG}
+  postgresql-${PGVER}-asn1oid postgresql-contrib-${PGVER}
 
 sudo chmod go+w $BASEDIR
 mkdir -p $BASEDIR/postgres
@@ -70,17 +68,18 @@ sudo sed --in-place=".default"                                          \
 echo "host all all  0.0.0.0/0 trust" | sudo tee -a ${PGDIR}/pg_hba.conf
 sudo chown postgres $PGDIR/pg_hba.conf
 
-# Not sure why we have to install plv8 here if we already did it with apt-get
-if false ; then
-  sudo apt-get --quiet --assume-yes install libc++1                       && \
-    cd ${HOME}                                                            && \
-    wget http://updates.xtuple.com/updates/plv8/linux64/xtuple_plv8.tgz   && \
-    tar xf xtuple_plv8.tgz                                                && \
-    cd xtuple_plv8                                                        && \
-    printf "\n" | sudo ./install_plv8.sh /usr                             && \
-    cd $HOME                                                              && \
-    rm -rf ${HOME}/xtuple_plv8 ${HOME}/xtuple_plv8.tgz
-fi
+# test the plv8 we built since that's what we recommend to customers
+PREVDIR="$(pwd)"
+mkdir -p ${HOME}/tmp
+cd ${HOME}/tmp
+  sudo apt-get --quiet --assume-yes install libc++1 || sicken Could not install libc++1
+  wget http://updates.xtuple.com/updates/plv8/linux64/xtuple_plv8.tgz   || sicken Could not download xtuple_plv8
+  tar xf xtuple_plv8.tgz
+  cd xtuple_plv8
+    printf "\n" | sudo ./install_plv8.sh /usr
+  cd ..
+  rm -rf ${HOME}/xtuple_plv8 ${HOME}/xtuple_plv8.tgz
+cd "$PREVDIR"
 
 sudo service postgresql restart
 

@@ -17,8 +17,8 @@ sudo apt-get install -q -y \
       bison             build-essential flex            g++                \
       gcc               gperf           icu-devtools    make               \
       mesa-common-dev   perl            python          readline-common    \
-      ruby              unixodbc-dev    xorg            xsltproc           \
-      zlib1g-dev        || sicken installing development tools
+      ruby              unixodbc-dev    xorg            zlib1g-dev         \
+  || sicken installing development tools
 
 sudo apt-get install -q -y \
       libasound2-dev     libcap-dev             libcups2-dev                  \
