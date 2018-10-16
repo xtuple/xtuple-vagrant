@@ -7,10 +7,13 @@ fi
 
 PROG=${PROG:-$(basename $0)}
 
-XTUPLE_DIR=$HOME/dev/xtuple/
-PGVER=${PGVER:-9.3}
+XTUPLEDIR=$HOME/dev/xtuple
+# let .nvmrc determine NODEVER unless we have a reason to override
+NODEVER=
+PGVER=${PGVER:-9.5}
 QTVER=5
 WARNINGS=
+WINDOWSHOST=false
 
 cdir() {
   echo "Changing directory to $1"
@@ -33,37 +36,21 @@ sicken() {
 
 usage() {
   echo $PROG -h
-  echo $PROG [ -p postgresversion ] [ -q qtversion ]
+  echo $PROG [ -p postgresversion ] [ -q qtversion ] [ -w ]
+  echo
+  echo "-w      running on a Windows host"
 }
 
-while getopts "hp:q:" OPT ; do
+while getopts "hn:p:q:w" OPT ; do
   case $OPT in
     h) usage
        exit 0
        ;;
-    p) PGVER=$OPTARG
-       ;;
-    q) QTVER=$OPTARG
-       ;;
+    n) NODEVER=$OPTARG  ;;
+    p) PGVER=$OPTARG    ;;
+    q) QTVER=$OPTARG    ;;
+    w) WINDOWSHOST=true ;;
   esac
 done
 
-# install git
-echo "Installing Git"
-sudo apt-get install git -y
-
-# this is a temporary fix for the problem where Windows
-# cannot translate the symlinks in the repository
-cat <<SKIP
-echo "Creating symlink to lib folder"
-cdir $HOME/dev/xtuple/lib                       || die
-rm module                                               || die
-ln -s ../node_modules module                            || die
-git update-index --assume-unchanged module              || die
-
-echo "Creating symlink to application folder"
-cdir $HOME/dev/xtuple/enyo-client/application   || die
-rm lib                                                  || die
-ln -s ../../lib lib                                     || die
-git update-index --assume-unchanged lib                 || die
-SKIP
+sudo apt-get install --assume-yes git
