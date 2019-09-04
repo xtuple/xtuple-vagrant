@@ -19,6 +19,7 @@ if [ "${DEBDIST}" = "wheezy" ] ; then
 fi
 
 case "${DEBDIST}" in
+  "bionic") ;&
   "trusty") ;&
   "utopic") ;&
   "wheezy") ;&
@@ -33,15 +34,13 @@ esac
 
 sudo apt-get --quiet --quiet update
 
-if [ $PGVER != 9.1 ] ; then
-  sudo apt-get --quiet --assume-yes remove       \
-    postgresql-9.1 postgresql-server-dev-9.1     \
-    postgresql-client-9.1 postgresql-contrib-9.1 \
-    postgresql-9.1-asn1oid postgresql-9.1-plv8 2>&1
-fi
 sudo apt-get --quiet --quiet --assume-yes install \
   build-essential curl libssl-dev xvfb xsltproc   \
-  python-software-properties software-properties-common
+  software-properties-common
+
+sudo apt-get --quiet --assume-yes install \
+  libxss1 libasound2 libfontconfig1 libharfbuzz0b libnspr4 libnss3 \
+  libxrender1 libxkbcommon0 libxkbcommon-x11-0
 
 sudo apt-get --quiet --quiet --assume-yes                            \
              --allow-downgrades --allow-change-held-packages install \
@@ -73,7 +72,7 @@ PREVDIR="$(pwd)"
 mkdir -p ${HOME}/tmp
 cd ${HOME}/tmp
   sudo apt-get --quiet --assume-yes install libc++1 || sicken Could not install libc++1
-  wget http://updates.xtuple.com/updates/plv8/linux64/xtuple_plv8.tgz   || sicken Could not download xtuple_plv8
+  wget --no-verbose http://updates.xtuple.com/updates/plv8/linux64/xtuple_plv8.tgz   || sicken Could not download xtuple_plv8
   tar xf xtuple_plv8.tgz
   cd xtuple_plv8
     printf "\n" | sudo ./install_plv8.sh /usr
@@ -104,6 +103,7 @@ cdir $XTUPLEDIR/node-datasource/lib/private
 [ -e encryption_key.txt ] || cat /dev/urandom | tr -dc '0-9a-zA-Z!@#$%^&*_+-'| head -c 64 > encryption_key.txt
 [ -e server.key         ] || openssl genrsa -des3 -out server.key -passout pass:xtuple 1024
 openssl rsa -in server.key -passin pass:xtuple -out key.pem -passout pass:xtuple
+[ -e $HOME/.rnd ] || touch $HOME/.rnd
 openssl req -batch -new -key key.pem -out server.csr -subj '/CN='$(hostname)
 openssl x509 -req -days 365 -in server.csr -signkey key.pem -out server.crt
 
